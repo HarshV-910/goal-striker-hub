@@ -14,7 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_logs: {
+        Row: {
+          created_at: string
+          id: string
+          learning_notes: string | null
+          log_date: string
+          temporary_goal: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          learning_notes?: string | null
+          log_date?: string
+          temporary_goal?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          learning_notes?: string | null
+          log_date?: string
+          temporary_goal?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      goal_dependencies: {
+        Row: {
+          created_at: string
+          depends_on_goal_id: string
+          goal_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          depends_on_goal_id: string
+          goal_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          depends_on_goal_id?: string
+          goal_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_dependencies_depends_on_goal_id_fkey"
+            columns: ["depends_on_goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goal_dependencies_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_days: number | null
+          end_date: string | null
+          id: string
+          parent_goal_id: string | null
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          end_date?: string | null
+          id?: string
+          parent_goal_id?: string | null
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_days?: number | null
+          end_date?: string | null
+          id?: string
+          parent_goal_id?: string | null
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_parent_goal_id_fkey"
+            columns: ["parent_goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
