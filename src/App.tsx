@@ -8,6 +8,9 @@ import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Goals from "./pages/Goals";
+import DailyLog from "./pages/DailyLog";
+import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +56,21 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/goals" element={
+              <ProtectedRoute>
+                <Goals />
+              </ProtectedRoute>
+            } />
+            <Route path="/daily-log" element={
+              <ProtectedRoute>
+                <DailyLog />
+              </ProtectedRoute>
+            } />
+            <Route path="/calendar" element={
+              <ProtectedRoute>
+                <Calendar />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
