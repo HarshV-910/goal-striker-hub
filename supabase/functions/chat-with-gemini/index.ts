@@ -21,7 +21,7 @@ serve(async (req) => {
     const { message, context } = await req.json();
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -30,14 +30,15 @@ serve(async (req) => {
         body: JSON.stringify({
           contents: [
             {
+              role: "user",
               parts: [
                 {
-                  text: `You are a career guidance AI assistant for a goal tracking platform called "Striker". 
-                  Help users with their career planning, study strategies, and goal achievement.
-                  
-                  Context about the user: ${context || 'No specific context provided'}
-                  
-                  User message: ${message}`
+                  text: `You are a career guidance AI assistant for a goal tracking platform called "Striker".
+Help users with their career planning, study strategies, and goal achievement.
+
+Context about the user: ${context || 'No specific context provided'}
+
+User message: ${message}`
                 }
               ]
             }
