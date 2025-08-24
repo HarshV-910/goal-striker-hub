@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AIChat } from './AIChat';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
@@ -79,10 +80,10 @@ export const Sidebar = () => {
           {/* AI Chat Toggle */}
           <div className="p-4 border-t border-sidebar-border">
             <Button
-              variant="outline"
+              variant="default"
               className={cn(
                 "w-full justify-start transition-all duration-200 hover:scale-105",
-                "text-sidebar-foreground border-sidebar-border hover:bg-sidebar-accent",
+                "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md",
                 isCollapsed && "px-3"
               )}
               onClick={() => setIsChatOpen(true)}
@@ -96,27 +97,8 @@ export const Sidebar = () => {
 
       {/* Chat Panel */}
       {isChatOpen && (
-        <div className="fixed right-0 top-0 h-full w-80 bg-card border-l border-border z-50 animate-slide-in-right">
-          <div className="flex flex-col h-full">
-            <div className="p-4 border-b border-border">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">AI Career Guidance</h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsChatOpen(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex-1 p-4">
-              <div className="text-center text-muted-foreground">
-                AI Chat component will be implemented here
-              </div>
-            </div>
-          </div>
+        <div className="fixed right-0 top-0 h-full w-96 bg-card border-l border-border z-50 animate-slide-in-right shadow-2xl">
+          <AIChat onClose={() => setIsChatOpen(false)} />
         </div>
       )}
 
