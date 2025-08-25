@@ -21,8 +21,11 @@ export type Database = {
           learning_notes: string | null
           log_date: string
           temporary_goal: string | null
+          today_goals: string[] | null
+          tomorrow_goals: string[] | null
           updated_at: string
           user_id: string
+          what_learned_today: string | null
         }
         Insert: {
           created_at?: string
@@ -30,8 +33,11 @@ export type Database = {
           learning_notes?: string | null
           log_date?: string
           temporary_goal?: string | null
+          today_goals?: string[] | null
+          tomorrow_goals?: string[] | null
           updated_at?: string
           user_id: string
+          what_learned_today?: string | null
         }
         Update: {
           created_at?: string
@@ -39,8 +45,11 @@ export type Database = {
           learning_notes?: string | null
           log_date?: string
           temporary_goal?: string | null
+          today_goals?: string[] | null
+          tomorrow_goals?: string[] | null
           updated_at?: string
           user_id?: string
+          what_learned_today?: string | null
         }
         Relationships: []
       }
@@ -83,11 +92,14 @@ export type Database = {
       goals: {
         Row: {
           created_at: string
+          deadline: string | null
           description: string | null
           duration_days: number | null
           end_date: string | null
           id: string
+          is_main_goal: boolean | null
           parent_goal_id: string | null
+          progress_percentage: number | null
           start_date: string | null
           status: string
           title: string
@@ -96,11 +108,14 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deadline?: string | null
           description?: string | null
           duration_days?: number | null
           end_date?: string | null
           id?: string
+          is_main_goal?: boolean | null
           parent_goal_id?: string | null
+          progress_percentage?: number | null
           start_date?: string | null
           status?: string
           title: string
@@ -109,11 +124,14 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deadline?: string | null
           description?: string | null
           duration_days?: number | null
           end_date?: string | null
           id?: string
+          is_main_goal?: boolean | null
           parent_goal_id?: string | null
+          progress_percentage?: number | null
           start_date?: string | null
           status?: string
           title?: string
@@ -152,6 +170,66 @@ export type Database = {
           full_name?: string | null
           id?: string
           timezone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sub_goal_dependencies: {
+        Row: {
+          created_at: string
+          depends_on_sub_goal_id: string
+          id: string
+          sub_goal_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          depends_on_sub_goal_id: string
+          id?: string
+          sub_goal_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          depends_on_sub_goal_id?: string
+          id?: string
+          sub_goal_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sub_goals: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          main_goal_id: string
+          order_index: number | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          main_goal_id: string
+          order_index?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          main_goal_id?: string
+          order_index?: number | null
+          status?: string
+          title?: string
           updated_at?: string
           user_id?: string
         }
