@@ -6,10 +6,28 @@ import { Progress } from '@/components/ui/progress';
 import { CreateGoalDialog } from '@/components/CreateGoalDialog';
 import { SubGoalManager } from '@/components/SubGoalManager';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown, ChevronUp, Target, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, Target, CheckCircle, Clock, AlertCircle, MoreHorizontal, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from '@/components/ui/alert-dialog';
 
 interface Goal {
   id: string;
@@ -35,6 +53,7 @@ const Goals = () => {
   const [loading, setLoading] = useState(true);
   const [expandedGoals, setExpandedGoals] = useState<Set<string>>(new Set());
   const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -88,6 +107,41 @@ const Goals = () => {
       setSubGoalStats(stats);
     } catch (error) {
       console.error('Error fetching sub goal stats:', error);
+    }
+  };
+
+  const handleDeleteGoal = async (goalId: string) => {
+    try {
+      // First delete all sub-goals for this goal
+      const { error: subGoalsError } = await supabase
+        .from('sub_goals')
+        .delete()
+        .eq('main_goal_id', goalId);
+
+      if (subGoalsError) throw subGoalsError;
+
+      // Then delete the main goal
+      const { error: goalError } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', goalId)
+        .eq('user_id', user?.id);
+
+      if (goalError) throw goalError;
+
+      toast({
+        title: "Success",
+        description: "Goal deleted successfully!",
+      });
+
+      fetchGoals();
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete goal. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -267,7 +321,44 @@ const Goals = () => {
                           <Progress value={goal.progress_percentage} className="h-2" />
                         </div>
                       </div>
-                      <div className="ml-4">
+                      <div className="flex items-center gap-2 ml-4">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onSelect={(e) => e.preventDefault()}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete Goal
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Goal</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{goal.title}"? This will also delete all associated sub-goals. This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteGoal(goal.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         {expandedGoals.has(goal.id) ? (
                           <ChevronUp className="h-5 w-5 text-muted-foreground" />
                         ) : (

@@ -7,10 +7,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, List, ArrowRight } from "lucide-react";
+import { Plus, List, ArrowRight, MoreHorizontal, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle, 
+  AlertDialogTrigger 
+} from '@/components/ui/alert-dialog';
 
 interface SubGoal {
   id: string;
@@ -229,6 +246,41 @@ export function SubGoalManager({ mainGoalId, onSubGoalsUpdate }: SubGoalManagerP
     }
   };
 
+  const handleDeleteSubGoal = async (subGoalId: string) => {
+    try {
+      // First delete sub-goal dependencies
+      await supabase
+        .from('sub_goal_dependencies')
+        .delete()
+        .or(`sub_goal_id.eq.${subGoalId},depends_on_sub_goal_id.eq.${subGoalId}`);
+
+      // Then delete the sub-goal
+      const { error } = await supabase
+        .from('sub_goals')
+        .delete()
+        .eq('id', subGoalId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Sub-goal deleted successfully!",
+      });
+
+      fetchSubGoals();
+      fetchDependencies();
+      onSubGoalsUpdate();
+    } catch (error) {
+      console.error('Error deleting sub-goal:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete sub-goal. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -316,15 +368,54 @@ export function SubGoalManager({ mainGoalId, onSubGoalsUpdate }: SubGoalManagerP
           <Card key={subGoal.id}>
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
-                <div>
+                <div className="flex-1">
                   <CardTitle className="text-base">{subGoal.title}</CardTitle>
                   {subGoal.description && (
                     <p className="text-sm text-muted-foreground mt-1">{subGoal.description}</p>
                   )}
                 </div>
-                <Badge variant="secondary" className={getStatusColor(subGoal.status)}>
-                  {getStatusLabel(subGoal.status)}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className={getStatusColor(subGoal.status)}>
+                    {getStatusLabel(subGoal.status)}
+                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onSelect={(e) => e.preventDefault()}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Sub-Goal
+                          </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Sub-Goal</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{subGoal.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteSubGoal(subGoal.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
