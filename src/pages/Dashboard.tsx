@@ -78,11 +78,11 @@ export const Dashboard = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-500';
+        return 'bg-success';
       case 'in_progress':
-        return 'bg-blue-500';
+        return 'bg-primary';
       default:
-        return 'bg-gray-500';
+        return 'bg-muted-foreground';
     }
   };
 
@@ -144,30 +144,30 @@ export const Dashboard = () => {
         <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <TrendingUp className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.completedGoals}</div>
+            <div className="text-2xl font-bold text-success">{stats.completedGoals}</div>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600" />
+            <Calendar className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.inProgressGoals}</div>
+            <div className="text-2xl font-bold text-primary">{stats.inProgressGoals}</div>
           </CardContent>
         </Card>
 
         <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Todo</CardTitle>
-            <BookOpen className="h-4 w-4 text-gray-600" />
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-600">{stats.todoGoals}</div>
+            <div className="text-2xl font-bold text-muted-foreground">{stats.todoGoals}</div>
           </CardContent>
         </Card>
       </div>
