@@ -122,7 +122,7 @@ export const AIChat = ({ onClose }: AIChatProps) => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-primary/5">
+      <div className="p-4 border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
@@ -226,7 +226,7 @@ export const AIChat = ({ onClose }: AIChatProps) => {
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-4 border-t border-border bg-background">
+      <div className="p-4 border-t border-border bg-background/95 backdrop-blur-sm">
         <div className="flex gap-2">
           <Input
             ref={inputRef}

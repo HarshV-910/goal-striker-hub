@@ -30,7 +30,7 @@ export const Sidebar = () => {
     <>
       {/* Sidebar */}
       <div className={cn(
-        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-40 transition-all duration-300 animate-slide-in-right",
+        "fixed left-0 top-0 h-full glass-card border-r border-sidebar-border z-40 transition-all duration-300 animate-slide-in-right",
         isCollapsed ? "w-16" : "w-64"
       )}>
         <div className="flex flex-col h-full">
@@ -60,12 +60,12 @@ export const Sidebar = () => {
               return (
                 <Button
                   key={item.name}
-                  variant={isActive ? "default" : "ghost"}
+                  variant="ghost"
                   className={cn(
                     "w-full justify-start transition-all duration-200 hover:scale-105",
                     isActive 
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-lg" 
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      ? "bg-white/10 text-white border border-white/20 hover:bg-white/20" 
+                      : "text-sidebar-foreground hover:bg-white/5 hover:text-white",
                     isCollapsed && "px-3"
                   )}
                   onClick={() => navigate(item.href)}
@@ -97,7 +97,7 @@ export const Sidebar = () => {
 
       {/* Chat Panel */}
       {isChatOpen && (
-        <div className="fixed right-0 top-0 h-full w-96 bg-card border-l border-border z-50 animate-slide-in-right shadow-2xl">
+        <div className="fixed right-0 top-0 h-full w-96 bg-background border-l border-border z-50 animate-slide-in-right shadow-2xl">
           <AIChat onClose={() => setIsChatOpen(false)} />
         </div>
       )}
