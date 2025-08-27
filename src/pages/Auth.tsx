@@ -59,12 +59,12 @@ export const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/50 to-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4 animate-bounce-in">
-            <Target className="h-8 w-8 text-primary-foreground" />
+          <div className="inline-flex items-center justify-center w-16 h-16 glass-card rounded-full mb-4 animate-bounce-in">
+            <Target className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
             Striker
@@ -74,7 +74,7 @@ export const Auth = () => {
           </p>
         </div>
 
-        <Card className="shadow-xl border-0 bg-card/80 backdrop-blur-sm">
+        <Card className="glass-card shadow-2xl border-0">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
               {isLogin ? 'Welcome Back' : 'Get Started'}

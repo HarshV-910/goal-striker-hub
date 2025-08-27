@@ -54,7 +54,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-card border-b border-border px-6 py-4 animate-fade-in">
+    <header className="glass-card border-b border-border px-6 py-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
@@ -69,7 +69,7 @@ export const Header = () => {
 
         <div className="flex items-center space-x-4">
           {/* Date/Time Display */}
-          <div className="flex items-center space-x-2 bg-muted px-3 py-2 rounded-lg">
+          <div className="flex items-center space-x-2 glass-subtle px-3 py-2 rounded-lg">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">
               {formatTime(currentTime, selectedTimezone)}

@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-[hsl(240_50%_8%)] to-[hsl(260_40%_10%)]">
       <Header />
       <div className="flex">
         <Sidebar />
