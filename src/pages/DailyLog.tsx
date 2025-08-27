@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Target, Calendar, Save, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { BookOpen, Target, Calendar, Save, CheckCircle, Clock, AlertCircle, Plus, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -33,7 +34,8 @@ const DailyLog = () => {
     learning_notes: '',
     temporary_goal: ''
   });
-  const [yesterdayGoals, setYesterdayGoals] = useState<Goal[]>([]);
+  const [todayGoals, setTodayGoals] = useState<string[]>([]);
+  const [newGoal, setNewGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const { user } = useAuth();
@@ -42,26 +44,25 @@ const DailyLog = () => {
   useEffect(() => {
     if (user) {
       fetchDailyLog();
-      fetchYesterdayGoals();
+      fetchTodayGoals();
     }
   }, [user]);
 
-  const fetchYesterdayGoals = async () => {
+  const fetchTodayGoals = async () => {
     try {
       const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
       
       const { data, error } = await supabase
-        .from('goals')
-        .select('id, title, status, created_at')
+        .from('daily_logs')
+        .select('tomorrow_goals')
         .eq('user_id', user?.id)
-        .gte('created_at', yesterday)
-        .lt('created_at', format(new Date(), 'yyyy-MM-dd'))
-        .order('created_at', { ascending: false });
+        .eq('log_date', yesterday)
+        .maybeSingle();
 
       if (error) throw error;
-      setYesterdayGoals(data || []);
+      setTodayGoals(data?.tomorrow_goals || []);
     } catch (error) {
-      console.error('Error fetching yesterday goals:', error);
+      console.error('Error fetching today goals:', error);
     }
   };
 
@@ -127,20 +128,25 @@ const DailyLog = () => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4" />;
-      case 'in_progress': return <Clock className="h-4 w-4" />;
-      default: return <AlertCircle className="h-4 w-4" />;
+  const addTomorrowGoal = () => {
+    if (newGoal.trim()) {
+      setDailyLog(prev => ({
+        ...prev,
+        tomorrow_goals: [...prev.tomorrow_goals, newGoal.trim()]
+      }));
+      setNewGoal('');
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'text-success bg-success/10';
-      case 'in_progress': return 'text-primary bg-primary/10';
-      default: return 'text-muted-foreground bg-muted';
-    }
+  const removeTomorrowGoal = (index: number) => {
+    setDailyLog(prev => ({
+      ...prev,
+      tomorrow_goals: prev.tomorrow_goals.filter((_, i) => i !== index)
+    }));
+  };
+
+  const removeTodayGoal = (index: number) => {
+    setTodayGoals(prev => prev.filter((_, i) => i !== index));
   };
 
   if (loading) {
@@ -201,24 +207,26 @@ const DailyLog = () => {
               <Target className="h-5 w-5" />
               Today's Goals
             </CardTitle>
-            <CardDescription>Goals created yesterday for today</CardDescription>
+            <CardDescription>Goals set yesterday for today</CardDescription>
           </CardHeader>
           <CardContent>
-            {yesterdayGoals.length === 0 ? (
+            {todayGoals.length === 0 ? (
               <p className="text-muted-foreground text-center py-4">
-                No goals were created yesterday for today
+                No temporary goals set for today
               </p>
             ) : (
               <div className="space-y-2">
-                {yesterdayGoals.map((goal) => (
-                  <div key={goal.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div>{getStatusIcon(goal.status)}</div>
-                      <span className="font-medium">{goal.title}</span>
-                    </div>
-                    <Badge variant="secondary" className={getStatusColor(goal.status)}>
-                      {goal.status.replace('_', ' ')}
-                    </Badge>
+                {todayGoals.map((goal, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <span className="font-medium">{goal}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeTodayGoal(index)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -233,20 +241,43 @@ const DailyLog = () => {
               <Target className="h-5 w-5" />
               Tomorrow's Goals
             </CardTitle>
-            <CardDescription>Plan your goals for tomorrow</CardDescription>
+            <CardDescription>Set goals for tomorrow</CardDescription>
           </CardHeader>
           <CardContent>
-            <Textarea
-              placeholder="Enter tomorrow's goals (one per line)..."
-              value={dailyLog.tomorrow_goals.join('\n')}
-              onChange={(e) => setDailyLog(prev => ({
-                ...prev,
-                tomorrow_goals: e.target.value.split('\n').filter(goal => goal.trim())
-              }))}
-              className="min-h-[200px] resize-none"
-            />
-            <div className="text-sm text-muted-foreground mt-2">
-              Goals for tomorrow: {dailyLog.tomorrow_goals.length}
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add a goal for tomorrow..."
+                  value={newGoal}
+                  onChange={(e) => setNewGoal(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addTomorrowGoal()}
+                />
+                <Button onClick={addTomorrowGoal} size="sm">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {dailyLog.tomorrow_goals.length > 0 && (
+                <div className="space-y-2">
+                  {dailyLog.tomorrow_goals.map((goal, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <span className="font-medium">{goal}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeTomorrowGoal(index)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="text-sm text-muted-foreground">
+                Goals for tomorrow: {dailyLog.tomorrow_goals.length}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -262,7 +293,7 @@ const DailyLog = () => {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center p-4 bg-muted/50 rounded-lg">
               <div className="text-2xl font-bold text-primary">
-                {yesterdayGoals.length}
+                {todayGoals.length}
               </div>
               <p className="text-sm text-muted-foreground">Today's Goals</p>
             </div>
