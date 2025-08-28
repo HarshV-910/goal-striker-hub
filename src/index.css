@@ -17,10 +17,10 @@
     --popover: 220 20% 10%;
     --popover-foreground: 220 15% 95%;
     
-    /* Primary purple accent */
-    --primary: 260 80% 60%;
+    /* Primary blue/black gradient accent */
+    --primary: 220 100% 30%;
     --primary-foreground: 220 15% 95%;
-    --primary-glow: 270 100% 80%;
+    --primary-glow: 210 100% 40%;
     
     /* Secondary with glass effect */
     --secondary: 220 15% 15%;
@@ -38,8 +38,8 @@
     --destructive: 0 65% 55%;
     --destructive-foreground: 220 15% 95%;
     
-    /* Success */
-    --success: 142 70% 50%;
+    /* Success - dark green */
+    --success: 142 70% 25%;
     --success-foreground: 220 15% 95%;
     
     /* Warning */
@@ -62,8 +62,8 @@
     --sidebar-ring: 260 80% 60%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-dark: linear-gradient(135deg, hsl(220 30% 5%), hsl(260 40% 10%), hsl(240 50% 8%));
+    --gradient-primary: linear-gradient(135deg, hsl(220 100% 30%), hsl(220 100% 10%));
+    --gradient-dark: linear-gradient(135deg, hsl(220 30% 5%), hsl(220 40% 10%), hsl(240 50% 8%), rgba(255,255,255,0.05));
     --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
     
     /* Glass effect properties */

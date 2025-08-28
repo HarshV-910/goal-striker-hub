@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "glass-card text-primary-foreground hover:bg-primary/90",
+        default: "glass-card text-primary-foreground hover:opacity-90 bg-gradient-to-r from-blue-600 to-slate-900",
         destructive:
           "glass-card text-destructive-foreground hover:bg-destructive/90",
         outline:
