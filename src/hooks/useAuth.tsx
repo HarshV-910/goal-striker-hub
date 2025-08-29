@@ -9,6 +9,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -80,6 +81,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await supabase.auth.signOut();
   };
 
+  const deleteAccount = async () => {
+    if (!user?.id) {
+      return { error: { message: 'No user found' } };
+    }
+
+    try {
+      // Delete all user data in order (due to foreign key constraints)
+      const userId = user.id;
+
+      // Delete sub goal dependencies first
+      await supabase.from('sub_goal_dependencies').delete().eq('user_id', userId);
+      
+      // Delete goal dependencies
+      await supabase.from('goal_dependencies').delete().eq('goal_id', userId);
+      
+      // Delete sub goals
+      await supabase.from('sub_goals').delete().eq('user_id', userId);
+      
+      // Delete goals
+      await supabase.from('goals').delete().eq('user_id', userId);
+      
+      // Delete daily logs
+      await supabase.from('daily_logs').delete().eq('user_id', userId);
+      
+      // Delete profile
+      await supabase.from('profiles').delete().eq('user_id', userId);
+
+      // Finally delete the auth user
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+      
+      if (error) {
+        return { error };
+      }
+
+      return { error: null };
+    } catch (error: any) {
+      return { error };
+    }
+  };
+
   const value = {
     user,
     session,
@@ -87,6 +128,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signUp,
     signIn,
     signOut,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

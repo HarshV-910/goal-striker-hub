@@ -1,14 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Clock, Globe, User, LogOut } from 'lucide-react';
+import { Clock, Globe, User, LogOut, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuTrigger, 
-  DropdownMenuItem 
+  DropdownMenuItem,
+  DropdownMenuSeparator 
 } from '@/components/ui/dropdown-menu';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
 const timezones = [
@@ -25,9 +37,11 @@ const timezones = [
 ];
 
 export const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
+  const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedTimezone, setSelectedTimezone] = useState('UTC');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,6 +65,25 @@ export const Header = () => {
     } catch {
       return format(date, 'PPp');
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    const { error } = await deleteAccount();
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete account",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Account Deleted",
+        description: "Your account and all data have been permanently deleted.",
+      });
+    }
+    
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -102,14 +135,43 @@ export const Header = () => {
               <DropdownMenuItem className="text-sm text-muted-foreground">
                 {user?.email}
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut} className="text-destructive">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setShowDeleteDialog(true)} 
+                className="text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Account
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove all your data including goals, daily logs, and personal information.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteAccount}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Account
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 };
