@@ -4,11 +4,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Target, Calendar, Save, CheckCircle, Clock, AlertCircle, Plus, X } from 'lucide-react';
+import { BookOpen, Target, Calendar, Save, CheckCircle, Clock, AlertCircle, Plus, X, Eye, CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { format, subDays } from 'date-fns';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 interface DailyLog {
   id?: string;
@@ -38,6 +42,10 @@ const DailyLog = () => {
   const [newGoal, setNewGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showViewLogs, setShowViewLogs] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [viewLogData, setViewLogData] = useState<string>('');
+  const [loadingViewLog, setLoadingViewLog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -149,6 +157,38 @@ const DailyLog = () => {
     setTodayGoals(prev => prev.filter((_, i) => i !== index));
   };
 
+  const fetchLogForDate = async (date: Date) => {
+    if (!user) return;
+    
+    setLoadingViewLog(true);
+    try {
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      
+      const { data, error } = await supabase
+        .from('daily_logs')
+        .select('what_learned_today')
+        .eq('user_id', user.id)
+        .eq('log_date', formattedDate)
+        .maybeSingle();
+
+      if (error) throw error;
+      
+      setViewLogData(data?.what_learned_today || 'No learning notes found for this date.');
+    } catch (error) {
+      console.error('Error fetching log for date:', error);
+      setViewLogData('Error loading learning notes for this date.');
+    } finally {
+      setLoadingViewLog(false);
+    }
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+      fetchLogForDate(date);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -171,10 +211,74 @@ const DailyLog = () => {
             <span className="text-sm font-medium">{format(new Date(), 'EEEE, MMMM dd, yyyy')}</span>
           </div>
         </div>
-        <Button onClick={saveDailyLog} disabled={saving}>
-          <Save className="h-4 w-4 mr-2" />
-          {saving ? "Saving..." : "Save Log"}
-        </Button>
+        <div className="flex gap-2">
+          <Dialog open={showViewLogs} onOpenChange={setShowViewLogs}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Eye className="h-4 w-4 mr-2" />
+                View Logs
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>View Learning Logs</DialogTitle>
+                <DialogDescription>
+                  Select a date to view what you learned that day
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !selectedDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background border border-border" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={handleDateSelect}
+                        disabled={(date) => date > new Date()}
+                        initialFocus
+                        className="pointer-events-auto p-3 bg-background"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                
+                {selectedDate && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      Learning Notes for {format(selectedDate, "MMMM dd, yyyy")}
+                    </label>
+                    <div className="min-h-[200px] p-3 border rounded-lg bg-muted/50">
+                      {loadingViewLog ? (
+                        <p className="text-muted-foreground">Loading...</p>
+                      ) : (
+                        <p className="whitespace-pre-wrap text-sm">
+                          {viewLogData}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button onClick={saveDailyLog} disabled={saving}>
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? "Saving..." : "Save Log"}
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
