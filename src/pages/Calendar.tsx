@@ -134,9 +134,6 @@ const Calendar = () => {
                 <CardTitle className="text-lg">
                   {isToday(selectedDate) ? 'Today' : format(selectedDate, 'MMM d, yyyy')}
                 </CardTitle>
-                <CardDescription>
-                  {selectedDateGoals.length === 0 ? 'No goals due' : `${selectedDateGoals.length} goal(s) due`}
-                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {selectedDateGoals.length === 0 ? (
