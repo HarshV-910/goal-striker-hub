@@ -118,14 +118,14 @@ export function CreateGoalDialog({ onGoalCreated }: CreateGoalDialogProps) {
                   {deadline ? format(deadline, "PPP") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0" align="start">
+              <PopoverContent className="w-[300px] p-0 bg-background border border-border" align="start">
                 <Calendar
                   mode="single"
                   selected={deadline}
                   onSelect={setDeadline}
                   disabled={(date) => date < new Date()}
                   initialFocus
-                  className="pointer-events-auto p-3"
+                  className="pointer-events-auto p-3 bg-background"
                 />
               </PopoverContent>
             </Popover>
