@@ -18,7 +18,7 @@ serve(async (req) => {
       throw new Error('GEMINI_API_KEY is not set');
     }
 
-    const { message, context } = await req.json();
+    const { message, context, conversationHistory = [] } = await req.json();
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -29,18 +29,21 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           contents: [
+            // Include conversation history for context
+            ...conversationHistory,
             {
               role: "user",
               parts: [
                 {
-                  text: `You are a career guidance AI assistant for a goal tracking platform called "Striker".
+                  text: conversationHistory.length === 0 ? 
+                    `You are a career guidance AI assistant for a goal tracking platform called "Striker".
 Help users with their career planning, study strategies, and goal achievement.
 
 IMPORTANT: Keep your responses SHORT and CONCISE (2-3 sentences maximum). Use simple, clear language that's easy to understand. Focus on actionable advice.
 
 Context about the user: ${context || 'No specific context provided'}
 
-User message: ${message}`
+User message: ${message}` : message
                 }
               ]
             }

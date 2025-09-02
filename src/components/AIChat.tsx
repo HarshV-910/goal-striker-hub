@@ -64,10 +64,17 @@ export const AIChat = ({ onClose }: AIChatProps) => {
     setIsLoading(true);
 
     try {
+      // Send conversation history for context
+      const conversationHistory = messages.map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
+      }));
+
       const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
         body: {
           message: userMessage.content,
-          context: 'User is using the Striker goal tracking platform'
+          context: 'User is using the Striker goal tracking platform',
+          conversationHistory: conversationHistory
         }
       });
 
