@@ -36,6 +36,8 @@ serve(async (req) => {
                   text: `You are a career guidance AI assistant for a goal tracking platform called "Striker".
 Help users with their career planning, study strategies, and goal achievement.
 
+IMPORTANT: Keep your responses SHORT and CONCISE (2-3 sentences maximum). Use simple, clear language that's easy to understand. Focus on actionable advice.
+
 Context about the user: ${context || 'No specific context provided'}
 
 User message: ${message}`
