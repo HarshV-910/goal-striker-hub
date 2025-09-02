@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
-import { Loader2, Send, User, Bot } from 'lucide-react';
+import { Loader2, Send, User, Bot, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import ReactMarkdown from 'react-markdown';
 
@@ -20,6 +22,9 @@ interface AIChatProps {
 }
 
 export const AIChat = ({ onClose }: AIChatProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -30,7 +35,6 @@ export const AIChat = ({ onClose }: AIChatProps) => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -126,6 +130,37 @@ export const AIChat = ({ onClose }: AIChatProps) => {
     });
   };
 
+  const createNoteFromResponse = async (questionMessage: Message, responseMessage: Message) => {
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .insert([{
+          user_id: user?.id,
+          title: `AI Chat: ${questionMessage.content.substring(0, 50)}...`,
+          content: `Question: ${questionMessage.content}\n\nResponse: ${responseMessage.content}`,
+          note_date: new Date().toISOString().split('T')[0]
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Note created from chat response",
+      });
+      
+      // Navigate to notes page
+      navigate('/notes');
+      onClose();
+    } catch (error) {
+      console.error('Error creating note:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create note",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -154,7 +189,7 @@ export const AIChat = ({ onClose }: AIChatProps) => {
       {/* Messages */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <div
               key={message.id}
               className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -201,11 +236,29 @@ export const AIChat = ({ onClose }: AIChatProps) => {
                     <p className="text-sm">{message.content}</p>
                   )}
                 </Card>
-                <p className={`text-xs text-muted-foreground mt-1 ${
-                  message.role === 'user' ? 'text-right' : 'text-left'
+                <div className={`flex items-center mt-1 ${
+                  message.role === 'user' ? 'justify-end' : 'justify-between'
                 }`}>
-                  {formatTime(message.timestamp)}
-                </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatTime(message.timestamp)}
+                  </p>
+                  {message.role === 'assistant' && index > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 px-2 text-xs bg-green-600 text-white hover:bg-green-700 border-green-600 ml-2"
+                      onClick={() => {
+                        const questionMessage = messages[index - 1];
+                        if (questionMessage && questionMessage.role === 'user') {
+                          createNoteFromResponse(questionMessage, message);
+                        }
+                      }}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Create Note
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {message.role === 'user' && (

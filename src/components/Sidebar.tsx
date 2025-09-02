@@ -6,7 +6,8 @@ import {
   BookOpen, 
   MessageCircle, 
   Menu,
-  X
+  X,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ const navigation = [
   { name: 'Goals', href: '/goals', icon: Target },
   { name: 'Daily Log', href: '/daily-log', icon: BookOpen },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
+  { name: 'Your Notes', href: '/notes', icon: FileText },
 ];
 
 export const Sidebar = () => {
