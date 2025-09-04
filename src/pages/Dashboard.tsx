@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Target, TrendingUp, Calendar, BookOpen, Plus } from 'lucide-react';
+import { Target, TrendingUp, Calendar, BookOpen, Plus, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,12 +33,40 @@ export const Dashboard = () => {
     todoGoals: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [dailyQuote, setDailyQuote] = useState<string>('');
+  const [quoteLoading, setQuoteLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       fetchGoals();
+      fetchDailyQuote();
     }
   }, [user]);
+
+  const fetchDailyQuote = async () => {
+    try {
+      setQuoteLoading(true);
+      const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
+        body: {
+          message: 'Generate a single inspirational quote about study, concentration, motivation, or an interesting fact. Keep it under 100 characters. Only return the quote, nothing else.',
+          context: 'Daily motivational quote generator',
+          conversationHistory: []
+        }
+      });
+
+      if (error) {
+        console.error('Error fetching quote:', error);
+        setDailyQuote('Stay focused, stay determined. Success is a journey, not a destination.');
+      } else {
+        setDailyQuote(data.generatedText || 'Stay focused, stay determined. Success is a journey, not a destination.');
+      }
+    } catch (error) {
+      console.error('Error fetching daily quote:', error);
+      setDailyQuote('Stay focused, stay determined. Success is a journey, not a destination.');
+    } finally {
+      setQuoteLoading(false);
+    }
+  };
 
   const fetchGoals = async () => {
     try {
@@ -110,6 +138,28 @@ export const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-8 animate-fade-in">
+      {/* Daily Quote Section */}
+      <Card className="hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-3">
+            <Quote className="h-6 w-6 text-primary flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Today's Quote</h3>
+              {quoteLoading ? (
+                <div className="animate-pulse">
+                  <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground italic text-base leading-relaxed">
+                  "{dailyQuote}"
+                </p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Welcome Section */}
       <div className="flex items-center justify-between">
         <div>

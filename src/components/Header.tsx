@@ -91,9 +91,6 @@ export const Header = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
             <h1 className="text-2xl font-bold text-foreground">
               Striker
             </h1>
