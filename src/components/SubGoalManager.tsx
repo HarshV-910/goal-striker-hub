@@ -470,9 +470,6 @@ export function SubGoalManager({ mainGoalId, onSubGoalsUpdate }: SubGoalManagerP
                 <Badge variant="secondary" className={getStatusColor(subGoal.status)}>
                   {getStatusLabel(subGoal.status)}
                 </Badge>
-                {index < sortedOrder.length - 1 && (
-                  <ArrowRight className="h-4 w-4 text-muted-foreground ml-2" />
-                )}
               </div>
             ))}
           </div>
