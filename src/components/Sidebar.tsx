@@ -60,21 +60,21 @@ export const Sidebar = () => {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <Button
-                  key={item.name}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start transition-all duration-200 hover:scale-105",
-                    isActive 
-                      ? "bg-white/10 text-white border border-white/20 hover:bg-white/20" 
-                      : "text-sidebar-foreground hover:bg-white/5 hover:text-white",
-                    isCollapsed && "px-3"
-                  )}
-                  onClick={() => navigate(item.href)}
-                >
-                  <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />
-                  {!isCollapsed && item.name}
-                </Button>
+                  <Button
+                    key={item.name}
+                    variant="ghost"
+                    className={cn(
+                      "w-full transition-all duration-200 hover:scale-105",
+                      isActive 
+                        ? "bg-white/10 text-white border border-white/20 hover:bg-white/20" 
+                        : "text-sidebar-foreground hover:bg-white/5 hover:text-white",
+                      isCollapsed ? "justify-center px-0" : "justify-start"
+                    )}
+                    onClick={() => navigate(item.href)}
+                  >
+                    <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />
+                    {!isCollapsed && item.name}
+                  </Button>
               );
             })}
           </nav>
@@ -84,9 +84,9 @@ export const Sidebar = () => {
             <Button
               variant="default"
               className={cn(
-                "w-full justify-start transition-all duration-200 hover:scale-105",
+                "w-full transition-all duration-200 hover:scale-105",
                 "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md",
-                isCollapsed && "px-3"
+                isCollapsed ? "justify-center px-0" : "justify-start"
               )}
               onClick={() => setIsChatOpen(true)}
             >

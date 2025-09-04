@@ -66,7 +66,7 @@ export const Auth = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 glass-card rounded-full mb-4 animate-bounce-in">
             <Target className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-white">
             Striker
           </h1>
           <p className="text-muted-foreground mt-2">
