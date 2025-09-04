@@ -85,47 +85,65 @@ export const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center relative overflow-hidden">
       {/* Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h2 className="text-8xl md:text-9xl font-bold text-white/10 select-none font-['Permanent_Marker'] tracking-widest">
+        <h2 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white/30 select-none font-['Permanent_Marker'] tracking-widest whitespace-nowrap">
           No Distraction
         </h2>
       </div>
 
-      {/* Robot Character */}
+      {/* 3D Robot Character */}
       <div className="absolute left-8 md:left-16 top-1/2 transform -translate-y-1/2 z-10">
-        <div className="relative w-32 h-40 md:w-40 md:h-48">
-          {/* Robot Body */}
-          <div className="absolute bottom-0 w-20 h-24 md:w-24 md:h-28 bg-gradient-to-b from-slate-300 to-slate-400 rounded-lg border-4 border-slate-500 mx-auto left-1/2 transform -translate-x-1/2">
-            {/* Body details */}
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            <div className="absolute top-6 left-2 w-2 h-2 bg-slate-600 rounded"></div>
-            <div className="absolute top-6 right-2 w-2 h-2 bg-slate-600 rounded"></div>
+        <div className="relative w-36 h-44 md:w-44 md:h-52">
+          {/* Robot Body - More rounded and 3D */}
+          <div className="absolute bottom-0 w-24 h-28 md:w-28 md:h-32 bg-gradient-to-br from-white via-gray-100 to-gray-200 rounded-3xl shadow-2xl mx-auto left-1/2 transform -translate-x-1/2 border-2 border-gray-300">
+            {/* 3D Body Shadow */}
+            <div className="absolute inset-2 bg-gradient-to-br from-transparent to-gray-200/50 rounded-2xl"></div>
+            {/* Chest Panel */}
+            <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-16 h-12 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-inner">
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-md"></div>
+              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+              <div className="absolute bottom-2 right-2 w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+            </div>
+            {/* Arms */}
+            <div className="absolute top-6 -left-3 w-5 h-8 bg-gradient-to-br from-white to-gray-200 rounded-full shadow-lg border border-gray-300"></div>
+            <div className="absolute top-6 -right-3 w-5 h-8 bg-gradient-to-br from-white to-gray-200 rounded-full shadow-lg border border-gray-300"></div>
           </div>
           
-          {/* Robot Head */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-20 md:w-28 md:h-24 bg-gradient-to-b from-slate-200 to-slate-300 rounded-xl border-4 border-slate-500">
-            {/* Eyes */}
-            <div className="absolute top-3 left-3 w-6 h-6 md:w-7 md:h-7 bg-white rounded-full border-2 border-slate-600 overflow-hidden">
-              <div 
-                className="w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100"
-                style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
-              ></div>
+          {/* Robot Head - More 3D and oval */}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-28 h-24 md:w-32 md:h-28 bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-full shadow-2xl border-2 border-gray-300">
+            {/* 3D Head Shadow */}
+            <div className="absolute inset-2 bg-gradient-to-br from-transparent via-transparent to-gray-200/30 rounded-full"></div>
+            
+            {/* Large 3D Eyes */}
+            <div className="absolute top-4 left-4 w-8 h-8 md:w-9 md:h-9 bg-black rounded-full shadow-inner border-2 border-gray-400 overflow-hidden">
+              <div className="absolute inset-1 bg-gradient-to-br from-gray-800 to-black rounded-full">
+                <div 
+                  className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-blue-300 to-blue-600 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-lg"
+                  style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
+                >
+                  <div className="absolute top-1 left-1 w-2 h-2 bg-white/80 rounded-full"></div>
+                </div>
+              </div>
             </div>
-            <div className="absolute top-3 right-3 w-6 h-6 md:w-7 md:h-7 bg-white rounded-full border-2 border-slate-600 overflow-hidden">
-              <div 
-                className="w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100"
-                style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
-              ></div>
+            <div className="absolute top-4 right-4 w-8 h-8 md:w-9 md:h-9 bg-black rounded-full shadow-inner border-2 border-gray-400 overflow-hidden">
+              <div className="absolute inset-1 bg-gradient-to-br from-gray-800 to-black rounded-full">
+                <div 
+                  className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-blue-300 to-blue-600 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-lg"
+                  style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
+                >
+                  <div className="absolute top-1 left-1 w-2 h-2 bg-white/80 rounded-full"></div>
+                </div>
+              </div>
             </div>
             
-            {/* Mouth */}
-            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-4 h-2 bg-slate-600 rounded-full"></div>
+            {/* Small cute mouth */}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-1.5 bg-gray-600 rounded-full shadow-inner"></div>
+            
+            {/* Head highlights */}
+            <div className="absolute top-2 left-6 w-4 h-4 bg-white/40 rounded-full blur-sm"></div>
           </div>
           
-          {/* Antennas */}
-          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-            <div className="w-0.5 h-6 bg-slate-400 mx-auto"></div>
-            <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-          </div>
+          {/* Neck connector */}
+          <div className="absolute top-20 md:top-24 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-b from-gray-200 to-gray-300 rounded-full shadow-md border border-gray-400"></div>
         </div>
       </div>
 
@@ -161,12 +179,19 @@ export const Auth = () => {
         </div>
 
         <Card 
-          className="glass-card shadow-2xl border-0 backdrop-blur-md bg-white/70 border border-white/20 relative overflow-hidden"
+          className="shadow-2xl backdrop-blur-xl bg-blue-500/10 border border-white/20 relative overflow-hidden"
           onMouseEnter={() => setIsMouseInForm(true)}
           onMouseLeave={() => setIsMouseInForm(false)}
+          style={{
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 197, 253, 0.05))',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          }}
         >
-          {/* Glass reflection effect */}
-          <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></div>
+          {/* Glass reflection effects */}
+          <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/15 to-transparent pointer-events-none"></div>
+          <div className="absolute top-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+          <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/5 rounded-full blur-lg pointer-events-none"></div>
           
           <CardHeader className="text-center relative z-10">
             <CardTitle className="text-2xl text-slate-800">
