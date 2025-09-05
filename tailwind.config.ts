@@ -65,6 +65,7 @@ export default {
 			},
 			fontFamily: {
 				'permanent-marker': ['Permanent Marker', 'cursive'],
+				'orbitron': ['Orbitron', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

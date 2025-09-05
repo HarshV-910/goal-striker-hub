@@ -25,19 +25,27 @@ export const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Mouse tracking for robot eyes
+  // Mouse tracking for robot eyes - improved 360 degree movement
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
       
-      // Calculate eye position based on mouse position
-      const robotCenter = { x: 250, y: window.innerHeight / 2 };
-      const angle = Math.atan2(e.clientY - robotCenter.y, e.clientX - robotCenter.x);
-      const distance = Math.min(8, Math.sqrt(Math.pow(e.clientX - robotCenter.x, 2) + Math.pow(e.clientY - robotCenter.y, 2)) / 50);
+      // Calculate eye position based on mouse position - improved calculation
+      const robotCenter = { 
+        x: window.innerWidth * 0.15, // Approximate robot position
+        y: window.innerHeight / 2 
+      };
       
+      // Calculate distance and angle from robot center to mouse
+      const deltaX = e.clientX - robotCenter.x;
+      const deltaY = e.clientY - robotCenter.y;
+      const angle = Math.atan2(deltaY, deltaX);
+      const maxDistance = 6; // Maximum eye movement distance
+      
+      // Calculate eye position with proper 360-degree movement
       setEyePosition({
-        x: Math.cos(angle) * distance,
-        y: Math.sin(angle) * distance
+        x: Math.cos(angle) * maxDistance,
+        y: Math.sin(angle) * maxDistance
       });
     };
 
@@ -83,53 +91,53 @@ export const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center relative overflow-hidden">
-      {/* Background Text */}
+      {/* Background Text - Modified to remove 'o' and use Orbitron font */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h2 className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/50 select-none font-['Permanent_Marker'] tracking-widest whitespace-nowrap">
-          No Distraction
+        <h2 className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/50 select-none font-orbitron tracking-widest whitespace-nowrap">
+          N Distraction
         </h2>
       </div>
 
-      {/* 3D Robot Face */}
-      <div className="absolute left-8 md:left-16 top-1/2 transform -translate-y-1/2 z-10">
-        <div className="relative w-40 h-40 md:w-48 md:h-48">
-          {/* Robot Face - Enhanced 3D with gradients */}
+      {/* 3D Robot Face - Positioned to replace 'o' in "No Distraction" */}
+      <div className="absolute top-1/2 transform -translate-y-1/2 z-10" style={{ left: 'calc(15% - 2rem)' }}>
+        <div className="relative w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32">
+          {/* Robot Face - Enhanced 3D with gradients, sized relative to text */}
           <div className="w-full h-full bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 rounded-full shadow-[0_25px_50px_-12px_rgba(59,130,246,0.5),inset_0_4px_6px_-1px_rgba(255,255,255,0.4)] border-4 border-blue-300/30 relative overflow-hidden">
             {/* 3D Face Shadow and highlights */}
-            <div className="absolute inset-4 bg-gradient-to-br from-white/20 via-transparent to-blue-400/30 rounded-full"></div>
-            <div className="absolute top-4 left-8 w-16 h-16 bg-white/30 rounded-full blur-xl"></div>
-            <div className="absolute bottom-4 right-8 w-12 h-12 bg-blue-400/20 rounded-full blur-lg"></div>
+            <div className="absolute inset-2 bg-gradient-to-br from-white/20 via-transparent to-blue-400/30 rounded-full"></div>
+            <div className="absolute top-2 left-4 w-8 h-8 lg:w-12 lg:h-12 bg-white/30 rounded-full blur-xl"></div>
+            <div className="absolute bottom-2 right-4 w-6 h-6 lg:w-8 lg:h-8 bg-blue-400/20 rounded-full blur-lg"></div>
             
-            {/* Large 3D Eyes with enhanced effects */}
-            <div className="absolute top-8 left-8 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-4 border-gray-600/50 overflow-hidden">
-              <div className="absolute inset-2 bg-gradient-to-br from-gray-700 to-black rounded-full">
+            {/* Large 3D Eyes with enhanced effects - responsive sizing */}
+            <div className="absolute top-2 left-2 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+              <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
-                  className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
-                  style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
+                  className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                  style={{ transform: `translate(calc(-50% + ${eyePosition.x}px), calc(-50% + ${eyePosition.y}px))` }}
                 >
-                  <div className="absolute top-1 left-1 w-3 h-3 bg-white/90 rounded-full shadow-sm"></div>
-                  <div className="absolute bottom-1 right-1 w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+                  <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-white/90 rounded-full shadow-sm"></div>
+                  <div className="absolute bottom-0.5 right-0.5 w-1 h-1 bg-white/50 rounded-full"></div>
                 </div>
               </div>
             </div>
-            <div className="absolute top-8 right-8 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-4 border-gray-600/50 overflow-hidden">
-              <div className="absolute inset-2 bg-gradient-to-br from-gray-700 to-black rounded-full">
+            <div className="absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+              <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
-                  className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
-                  style={{ transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)` }}
+                  className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                  style={{ transform: `translate(calc(-50% + ${eyePosition.x}px), calc(-50% + ${eyePosition.y}px))` }}
                 >
-                  <div className="absolute top-1 left-1 w-3 h-3 bg-white/90 rounded-full shadow-sm"></div>
-                  <div className="absolute bottom-1 right-1 w-1.5 h-1.5 bg-white/50 rounded-full"></div>
+                  <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-white/90 rounded-full shadow-sm"></div>
+                  <div className="absolute bottom-0.5 right-0.5 w-1 h-1 bg-white/50 rounded-full"></div>
                 </div>
               </div>
             </div>
             
-            {/* Enhanced mouth with 3D effect */}
-            <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-6 h-2.5 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-gray-700"></div>
+            {/* Enhanced mouth with 3D effect - responsive */}
+            <div className="absolute bottom-3 lg:bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-1.5 lg:w-4 lg:h-2 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-gray-700"></div>
             
-            {/* Additional 3D highlights */}
-            <div className="absolute top-6 left-12 w-6 h-6 bg-white/50 rounded-full blur-sm"></div>
-            <div className="absolute top-12 right-16 w-4 h-4 bg-blue-200/60 rounded-full blur-sm"></div>
+            {/* Additional 3D highlights - responsive */}
+            <div className="absolute top-1 left-3 lg:top-3 lg:left-6 w-3 h-3 lg:w-4 lg:h-4 bg-white/50 rounded-full blur-sm"></div>
+            <div className="absolute top-3 right-4 lg:top-6 lg:right-8 w-2 h-2 lg:w-3 lg:h-3 bg-blue-200/60 rounded-full blur-sm"></div>
           </div>
         </div>
       </div>
@@ -144,7 +152,7 @@ export const Auth = () => {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <span className="text-white font-bold text-lg drop-shadow-lg font-['Permanent_Marker']">
+          <span className="text-white font-bold text-lg drop-shadow-lg font-orbitron">
             Concentration
           </span>
         </div>
