@@ -93,13 +93,13 @@ export const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center relative overflow-hidden">
       {/* Background Text - Modified to remove 'o' and use Orbitron font */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h2 className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/50 select-none font-orbitron tracking-widest whitespace-nowrap">
+        <h2 className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/80 select-none font-orbitron tracking-widest whitespace-nowrap">
           N Distraction
         </h2>
       </div>
 
       {/* 3D Robot Face - Positioned to replace 'o' in "No Distraction" */}
-      <div className="absolute top-1/2 transform -translate-y-1/2 z-10" style={{ left: 'calc(15% - 2rem)' }}>
+      <div className="absolute top-1/2 transform -translate-y-1/2 z-10" style={{ left: 'calc(50% - 8.5rem)' }}>
         <div className="relative w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32">
           {/* Robot Face - Enhanced 3D with gradients, sized relative to text */}
           <div className="w-full h-full bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 rounded-full shadow-[0_25px_50px_-12px_rgba(59,130,246,0.5),inset_0_4px_6px_-1px_rgba(255,255,255,0.4)] border-4 border-blue-300/30 relative overflow-hidden">
@@ -153,7 +153,7 @@ export const Auth = () => {
           }}
         >
           <span className="text-white font-bold text-lg drop-shadow-lg font-orbitron">
-            Concentration
+            concentrate...
           </span>
         </div>
       )}
@@ -174,13 +174,13 @@ export const Auth = () => {
         </div>
 
         <Card 
-          className="shadow-2xl backdrop-blur-xl bg-blue-500/5 border border-white/10 relative overflow-hidden"
+          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-25"
           onMouseEnter={() => setIsMouseInForm(true)}
           onMouseLeave={() => setIsMouseInForm(false)}
           style={{
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(147, 197, 253, 0.03))',
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(147, 197, 253, 0.01))',
             backdropFilter: 'blur(20px)',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 32px rgba(59, 130, 246, 0.1)'
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(59, 130, 246, 0.05)'
           }}
         >
           {/* Glass reflection effects */}
