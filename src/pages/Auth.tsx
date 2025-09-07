@@ -91,15 +91,15 @@ export const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center relative overflow-hidden">
-      {/* Background Text - With padding to cover 75% width and 50% height */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[12.5%] py-[25%]">
+      {/* Background Text - With padding to cover 85% width and 70% height */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[7.5%] py-[15%]">
         <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white/80 select-none font-orbitron tracking-widest">
           No Distraction
         </h2>
       </div>
 
       {/* 3D Robot Face - Positioned at left side with double size */}
-      <div className="absolute top-1/2 left-16 transform -translate-y-1/2 z-10">
+      <div className="absolute top-1/2 left-16 transform -translate-y-1/2 z-10 opacity-70">
         <div className="relative w-40 h-40 md:w-48 md:h-48 lg:w-64 lg:h-64">
           {/* Robot Face - Enhanced 3D with gradients, sized relative to text */}
           <div className="w-full h-full bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 rounded-full shadow-[0_25px_50px_-12px_rgba(59,130,246,0.5),inset_0_4px_6px_-1px_rgba(255,255,255,0.4)] border-4 border-blue-300/30 relative overflow-hidden">
@@ -109,7 +109,7 @@ export const Auth = () => {
             <div className="absolute bottom-2 right-4 w-6 h-6 lg:w-8 lg:h-8 bg-blue-400/20 rounded-full blur-lg"></div>
             
             {/* Large 3D Eyes with enhanced effects - responsive sizing */}
-            <div className="absolute top-2 left-2 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+            <div className="absolute top-6 left-6 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
               <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
                   className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
@@ -120,7 +120,7 @@ export const Auth = () => {
                 </div>
               </div>
             </div>
-            <div className="absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+            <div className="absolute top-6 right-6 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
               <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
                   className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
@@ -162,7 +162,7 @@ export const Auth = () => {
       <div className="ml-auto mr-8 md:mr-16 w-full max-w-md animate-fade-in flex flex-col justify-center min-h-screen">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-5xl font-bold text-white">
             Striker
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -171,7 +171,7 @@ export const Auth = () => {
         </div>
 
         <Card 
-          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-50"
+          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-50 hover:opacity-85 focus-within:opacity-85 transition-opacity duration-300"
           onMouseEnter={() => setIsMouseInForm(true)}
           onMouseLeave={() => setIsMouseInForm(false)}
           style={{
