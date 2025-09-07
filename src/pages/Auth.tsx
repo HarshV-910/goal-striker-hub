@@ -91,16 +91,16 @@ export const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[hsl(220_30%_5%)] via-[hsl(260_40%_10%)] to-[hsl(240_50%_8%)] flex items-center relative overflow-hidden">
-      {/* Background Text - Modified to remove 'o' and use Orbitron font */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <h2 className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/80 select-none font-orbitron tracking-widest whitespace-nowrap">
-          N Distraction
+      {/* Background Text - With padding to cover 75% width and 50% height */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-[12.5%] py-[25%]">
+        <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white/80 select-none font-orbitron tracking-widest">
+          No Distraction
         </h2>
       </div>
 
-      {/* 3D Robot Face - Positioned to replace 'o' in "No Distraction" */}
-      <div className="absolute top-1/2 transform -translate-y-1/2 z-10" style={{ left: 'calc(50% - 8.5rem)' }}>
-        <div className="relative w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32">
+      {/* 3D Robot Face - Positioned at left side with double size */}
+      <div className="absolute top-1/2 left-16 transform -translate-y-1/2 z-10">
+        <div className="relative w-40 h-40 md:w-48 md:h-48 lg:w-64 lg:h-64">
           {/* Robot Face - Enhanced 3D with gradients, sized relative to text */}
           <div className="w-full h-full bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 rounded-full shadow-[0_25px_50px_-12px_rgba(59,130,246,0.5),inset_0_4px_6px_-1px_rgba(255,255,255,0.4)] border-4 border-blue-300/30 relative overflow-hidden">
             {/* 3D Face Shadow and highlights */}
@@ -158,13 +158,10 @@ export const Auth = () => {
         </div>
       )}
 
-      {/* Auth Form - Moved to right side */}
-      <div className="ml-auto mr-8 md:mr-16 w-full max-w-md animate-fade-in">
+      {/* Auth Form - Centered vertically and horizontally */}
+      <div className="ml-auto mr-8 md:mr-16 w-full max-w-md animate-fade-in flex flex-col justify-center min-h-screen">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 glass-card rounded-full mb-4 animate-bounce-in">
-            <Target className="h-8 w-8 text-primary" />
-          </div>
           <h1 className="text-3xl font-bold text-white">
             Striker
           </h1>
@@ -174,7 +171,7 @@ export const Auth = () => {
         </div>
 
         <Card 
-          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-25"
+          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-50"
           onMouseEnter={() => setIsMouseInForm(true)}
           onMouseLeave={() => setIsMouseInForm(false)}
           style={{
