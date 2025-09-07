@@ -98,46 +98,45 @@ export const Auth = () => {
         </h2>
       </div>
 
-      {/* 3D Robot Face - Positioned at bottom right corner with margin */}
-      <div className="absolute bottom-8 right-8 z-10 opacity-70">
-        <div className="relative w-40 h-40 md:w-48 md:h-48 lg:w-64 lg:h-64">
-          {/* Robot Face - Enhanced 3D with gradients, sized relative to text */}
-          <div className="w-full h-full bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 rounded-full shadow-[0_25px_50px_-12px_rgba(59,130,246,0.5),inset_0_4px_6px_-1px_rgba(255,255,255,0.4)] border-4 border-blue-300/30 relative overflow-hidden">
-            {/* 3D Face Shadow and highlights */}
-            <div className="absolute inset-2 bg-gradient-to-br from-white/20 via-transparent to-blue-400/30 rounded-full"></div>
-            <div className="absolute top-2 left-4 w-8 h-8 lg:w-12 lg:h-12 bg-white/30 rounded-full blur-xl"></div>
-            <div className="absolute bottom-2 right-4 w-6 h-6 lg:w-8 lg:h-8 bg-blue-400/20 rounded-full blur-lg"></div>
+      {/* Robot Eyes - Positioned at bottom left corner with margin */}
+      <div className="absolute bottom-8 left-8 z-10 opacity-70">
+        <div className="relative w-32 h-20 md:w-40 md:h-24 lg:w-48 lg:h-28">
+          {/* Robot Eyes with cute eyebrows - 2x larger */}
+          
+          {/* Left Eye with Eyebrow */}
+          <div className="absolute top-0 left-0">
+            {/* Cute Eyebrow */}
+            <div className="absolute -top-3 left-1 w-8 h-2 md:w-10 md:h-3 lg:w-12 lg:h-3 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 rounded-full transform -rotate-12 shadow-sm"></div>
             
-            {/* Large 3D Eyes with enhanced effects - responsive sizing */}
-            <div className="absolute top-4 left-4 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+            {/* Eye */}
+            <div className="w-12 h-12 md:w-14 md:h-14 lg:w-20 lg:h-20 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
               <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
-                  className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                  className="w-6 h-6 md:w-8 md:h-8 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
                   style={{ transform: `translate(calc(-50% + ${eyePosition.x}px), calc(-50% + ${eyePosition.y}px))` }}
                 >
-                  <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-white/90 rounded-full shadow-sm"></div>
-                  <div className="absolute bottom-0.5 right-0.5 w-1 h-1 bg-white/50 rounded-full"></div>
+                  <div className="absolute top-1 left-1 w-2 h-2 md:w-3 md:h-3 lg:w-4 lg:h-4 bg-white rounded-full opacity-80"></div>
                 </div>
               </div>
             </div>
-            <div className="absolute top-4 right-4 w-6 h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
+          </div>
+          
+          {/* Right Eye with Eyebrow */}
+          <div className="absolute top-0 right-0">
+            {/* Cute Eyebrow */}
+            <div className="absolute -top-3 right-1 w-8 h-2 md:w-10 md:h-3 lg:w-12 lg:h-3 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 rounded-full transform rotate-12 shadow-sm"></div>
+            
+            {/* Eye */}
+            <div className="w-12 h-12 md:w-14 md:h-14 lg:w-20 lg:h-20 bg-gradient-to-br from-gray-900 via-black to-gray-800 rounded-full shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.8)] border-2 lg:border-4 border-gray-600/50 overflow-hidden">
               <div className="absolute inset-1 bg-gradient-to-br from-gray-700 to-black rounded-full">
                 <div 
-                  className="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                  className="w-6 h-6 md:w-8 md:h-8 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-300 via-blue-400 to-blue-700 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
                   style={{ transform: `translate(calc(-50% + ${eyePosition.x}px), calc(-50% + ${eyePosition.y}px))` }}
                 >
-                  <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-white/90 rounded-full shadow-sm"></div>
-                  <div className="absolute bottom-0.5 right-0.5 w-1 h-1 bg-white/50 rounded-full"></div>
+                  <div className="absolute top-1 left-1 w-2 h-2 md:w-3 md:h-3 lg:w-4 lg:h-4 bg-white rounded-full opacity-80"></div>
                 </div>
               </div>
             </div>
-            
-            {/* Enhanced mouth with 3D effect - responsive */}
-            <div className="absolute bottom-3 lg:bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-1.5 lg:w-4 lg:h-2 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-gray-700"></div>
-            
-            {/* Additional 3D highlights - responsive */}
-            <div className="absolute top-1 left-3 lg:top-3 lg:left-6 w-3 h-3 lg:w-4 lg:h-4 bg-white/50 rounded-full blur-sm"></div>
-            <div className="absolute top-3 right-4 lg:top-6 lg:right-8 w-2 h-2 lg:w-3 lg:h-3 bg-blue-200/60 rounded-full blur-sm"></div>
           </div>
         </div>
       </div>
