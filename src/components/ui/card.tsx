@@ -24,7 +24,7 @@ const Card = React.forwardRef<
     <div className="absolute top-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
     <div className="absolute bottom-4 right-4 w-12 h-12 bg-white/5 rounded-full blur-lg pointer-events-none"></div>
     
-    <div className="relative z-10">
+    <div className="relative z-10 opacity-90">
       {props.children}
     </div>
   </div>
