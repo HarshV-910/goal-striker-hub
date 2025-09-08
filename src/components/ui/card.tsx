@@ -14,14 +14,14 @@ const Card = React.forwardRef<
       className
     )}
     style={{
-      backgroundImage: `url(${glassImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
       backdropFilter: 'blur(20px)',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 32px rgba(59, 130, 246, 0.05)'
     }}
     {...props}
   >
+    {/* Background image with reduced opacity */}
+    <div className="absolute inset-0 opacity-50" style={{ backgroundImage: `url(${glassImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+    
     {/* Glass overlay with opacity control */}
     <div className="absolute inset-0 bg-black/20 opacity-80 hover:opacity-95 transition-opacity duration-300 rounded-lg"></div>
     
