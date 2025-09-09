@@ -100,6 +100,7 @@ export type Database = {
           is_main_goal: boolean | null
           parent_goal_id: string | null
           progress_percentage: number | null
+          reminder_options: string[] | null
           start_date: string | null
           status: string
           title: string
@@ -116,6 +117,7 @@ export type Database = {
           is_main_goal?: boolean | null
           parent_goal_id?: string | null
           progress_percentage?: number | null
+          reminder_options?: string[] | null
           start_date?: string | null
           status?: string
           title: string
@@ -132,6 +134,7 @@ export type Database = {
           is_main_goal?: boolean | null
           parent_goal_id?: string | null
           progress_percentage?: number | null
+          reminder_options?: string[] | null
           start_date?: string | null
           status?: string
           title?: string
