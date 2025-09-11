@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { CalendarIcon, Plus, Bell } from "lucide-react";
+import { CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,34 +17,14 @@ interface CreateGoalDialogProps {
   onGoalCreated: () => void;
 }
 
-const reminderOptions = [
-  { id: '15min', label: 'Before 15 minutes' },
-  { id: '30min', label: 'Before 30 minutes' },
-  { id: '1hour', label: 'Before 1 hour' },
-  { id: '1day', label: 'Before 1 day' },
-  { id: '3days', label: 'Before 3 days' },
-  { id: '7days', label: 'Before 7 days' },
-  { id: '1month', label: 'Before 1 month' },
-  { id: '3months', label: 'Before 3 months' },
-];
-
 export function CreateGoalDialog({ onGoalCreated }: CreateGoalDialogProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState<Date>();
-  const [selectedReminders, setSelectedReminders] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-
-  const handleReminderToggle = (reminderId: string) => {
-    setSelectedReminders(prev => 
-      prev.includes(reminderId) 
-        ? prev.filter(id => id !== reminderId)
-        : [...prev, reminderId]
-    );
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +38,6 @@ export function CreateGoalDialog({ onGoalCreated }: CreateGoalDialogProps) {
           title: title.trim(),
           description: description.trim() || null,
           deadline: deadline ? format(deadline, 'yyyy-MM-dd') : null,
-          reminder_options: selectedReminders.length > 0 ? selectedReminders : null,
           user_id: user.id,
           is_main_goal: true,
           status: 'todo'
@@ -75,7 +53,6 @@ export function CreateGoalDialog({ onGoalCreated }: CreateGoalDialogProps) {
       setTitle("");
       setDescription("");
       setDeadline(undefined);
-      setSelectedReminders([]);
       setOpen(false);
       onGoalCreated();
     } catch (error) {
@@ -152,32 +129,6 @@ export function CreateGoalDialog({ onGoalCreated }: CreateGoalDialogProps) {
                 />
               </PopoverContent>
             </Popover>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Bell className="h-4 w-4" />
-              <Label>Set Reminders (optional)</Label>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {reminderOptions.map((option) => (
-                <div key={option.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={option.id}
-                    checked={selectedReminders.includes(option.id)}
-                    onCheckedChange={() => handleReminderToggle(option.id)}
-                  />
-                  <Label htmlFor={option.id} className="text-sm cursor-pointer">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </div>
-            {selectedReminders.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {selectedReminders.length} reminder{selectedReminders.length > 1 ? 's' : ''} selected
-              </p>
-            )}
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

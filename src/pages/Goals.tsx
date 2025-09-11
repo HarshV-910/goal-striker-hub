@@ -38,7 +38,6 @@ interface Goal {
   deadline?: string;
   progress_percentage: number;
   is_main_goal: boolean;
-  reminder_options: string[] | null;
 }
 
 interface SubGoalStats {

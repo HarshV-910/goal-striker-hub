@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock, Globe, User, LogOut, Trash2, Settings } from 'lucide-react';
+import { Clock, Globe, User, LogOut, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -22,7 +22,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { supabase } from '@/integrations/supabase/client';
 
 const timezones = [
   { value: 'UTC', label: 'UTC' },
@@ -49,30 +48,8 @@ export const Header = () => {
       setCurrentTime(new Date());
     }, 1000);
 
-    // Fetch user's timezone from profile
-    if (user) {
-      fetchUserTimezone();
-    }
-
     return () => clearInterval(timer);
-  }, [user]);
-
-  const fetchUserTimezone = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('timezone')
-        .eq('user_id', user?.id)
-        .single();
-
-      if (error) throw error;
-      if (data?.timezone) {
-        setSelectedTimezone(data.timezone);
-      }
-    } catch (error) {
-      console.error('Error fetching user timezone:', error);
-    }
-  };
+  }, []);
 
   const formatTime = (date: Date, timezone: string) => {
     try {
@@ -156,10 +133,6 @@ export const Header = () => {
                 {user?.email}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={signOut} className="text-destructive">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out

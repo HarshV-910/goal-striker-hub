@@ -35,30 +35,13 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [dailyQuote, setDailyQuote] = useState<string>('');
   const [quoteLoading, setQuoteLoading] = useState(true);
-  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     if (user) {
       fetchGoals();
       fetchDailyQuote();
-      fetchUserProfile();
     }
   }, [user]);
-
-  const fetchUserProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('user_id', user?.id)
-        .single();
-
-      if (error) throw error;
-      setUserName(data?.full_name || '');
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
 
   const fetchDailyQuote = async () => {
     try {
@@ -181,7 +164,7 @@ export const Dashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            Welcome back{userName ? `, ${userName}` : ''}! 
+            Welcome back! 
           </h1>
           <p className="text-muted-foreground mt-1">
             Here's your goal tracking overview
