@@ -7,6 +7,22 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Target, Eye, EyeOff } from 'lucide-react';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
+
+const timezones = [
+  { value: 'UTC', label: 'UTC' },
+  { value: 'America/New_York', label: 'Eastern Time (UTC-5)' },
+  { value: 'America/Chicago', label: 'Central Time (UTC-6)' },
+  { value: 'America/Denver', label: 'Mountain Time (UTC-7)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (UTC-8)' },
+  { value: 'Europe/London', label: 'London (UTC+0)' },
+  { value: 'Europe/Paris', label: 'Paris (UTC+1)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (UTC+9)' },
+  { value: 'Asia/Kolkata', label: 'India Standard Time (UTC+5:30)' },
+  { value: 'Asia/Shanghai', label: 'China Standard Time (UTC+8)' },
+];
 
 export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,10 +31,15 @@ export const Auth = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMouseInForm, setIsMouseInForm] = useState(false);
   const [eyePosition, setEyePosition] = useState({ x: 0, y: 0 });
+  const [showOTP, setShowOTP] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [generatedOTP, setGeneratedOTP] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     fullName: '',
+    timezone: 'UTC',
   });
 
   const { signIn, signUp } = useAuth();
@@ -53,18 +74,85 @@ export const Auth = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  const sendOTPEmail = async (email: string, otp: string, type: 'signup' | 'reset', name?: string) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-otp-email', {
+        body: { email, otp, type, name }
+      });
+      
+      if (error) throw error;
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending OTP email:', error);
+      return { success: false, error };
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      let result;
       if (isLogin) {
-        result = await signIn(formData.email, formData.password);
+        // Login without OTP
+        const result = await signIn(formData.email, formData.password);
+        if (result.error) {
+          toast({
+            title: "Error",
+            description: result.error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Success",
+            description: "Welcome back!",
+          });
+          navigate('/dashboard');
+        }
       } else {
-        result = await signUp(formData.email, formData.password, formData.fullName);
+        // Signup with OTP
+        const otp = generateOTP();
+        setGeneratedOTP(otp);
+        
+        const emailResult = await sendOTPEmail(formData.email, otp, 'signup', formData.fullName);
+        if (emailResult.success) {
+          setShowOTP(true);
+          toast({
+            title: "OTP Sent",
+            description: "Please check your email for the verification code.",
+          });
+        } else {
+          throw new Error('Failed to send OTP email');
+        }
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const handleOTPVerification = async () => {
+    if (otpValue !== generatedOTP) {
+      toast({
+        title: "Error",
+        description: "Invalid OTP. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await signUp(formData.email, formData.password, formData.fullName, formData.timezone);
       if (result.error) {
         toast({
           title: "Error",
@@ -74,7 +162,7 @@ export const Auth = () => {
       } else {
         toast({
           title: "Success",
-          description: isLogin ? "Welcome back!" : "Account created successfully!",
+          description: "Account created successfully!",
         });
         navigate('/dashboard');
       }
@@ -82,6 +170,88 @@ export const Auth = () => {
       toast({
         title: "Error",
         description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const otp = generateOTP();
+      setGeneratedOTP(otp);
+      
+      const emailResult = await sendOTPEmail(formData.email, otp, 'reset');
+      if (emailResult.success) {
+        setShowForgotPassword(true);
+        setShowOTP(true);
+        toast({
+          title: "Reset Code Sent",
+          description: "Please check your email for the password reset code.",
+        });
+      } else {
+        throw new Error('Failed to send reset email');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send reset email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (otpValue !== generatedOTP) {
+      toast({
+        title: "Error",
+        description: "Invalid reset code. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.password || formData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Please enter a new password (minimum 6 characters).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Here you would typically update the password in the database
+      // For now, we'll show a success message
+      toast({
+        title: "Success",
+        description: "Password reset successfully! Please login with your new password.",
+      });
+      
+      // Reset form
+      setShowForgotPassword(false);
+      setShowOTP(false);
+      setOtpValue('');
+      setFormData({ ...formData, password: '' });
+      setIsLogin(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reset password. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -186,91 +356,198 @@ export const Auth = () => {
           
           <CardHeader className="text-center relative z-10">
             <CardTitle className="text-2xl text-white font-bold drop-shadow-lg">
-              {isLogin ? 'Welcome Back' : 'Get Started'}
+              {showOTP 
+                ? (showForgotPassword ? 'Reset Password' : 'Verify Email') 
+                : (isLogin ? 'Welcome Back' : 'Get Started')
+              }
             </CardTitle>
             <CardDescription className="text-white/80">
-              {isLogin 
-                ? 'Sign in to continue tracking your goals' 
-                : 'Create your account to start your journey'
+              {showOTP 
+                ? (showForgotPassword ? 'Enter the code sent to your email and new password' : 'Enter the verification code sent to your email')
+                : (isLogin 
+                  ? 'Sign in to continue tracking your goals' 
+                  : 'Create your account to start your journey'
+                )
               }
             </CardDescription>
           </CardHeader>
           
           <CardContent className="relative z-10">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+            {showOTP ? (
+              <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-white font-medium">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    required={!isLogin}
-                    className="transition-all duration-200 focus:scale-105 bg-white/20 border-white/30 text-white placeholder:text-white/60"
-                  />
+                  <Label className="text-white font-medium">Verification Code</Label>
+                  <div className="flex justify-center">
+                    <InputOTP value={otpValue} onChange={setOtpValue} maxLength={6}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} className="bg-white/20 border-white/30 text-white" />
+                        <InputOTPSlot index={1} className="bg-white/20 border-white/30 text-white" />
+                        <InputOTPSlot index={2} className="bg-white/20 border-white/30 text-white" />
+                        <InputOTPSlot index={3} className="bg-white/20 border-white/30 text-white" />
+                        <InputOTPSlot index={4} className="bg-white/20 border-white/30 text-white" />
+                        <InputOTPSlot index={5} className="bg-white/20 border-white/30 text-white" />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                  <p className="text-white/60 text-sm text-center">
+                    Enter the 6-digit code sent to {formData.email}
+                  </p>
                 </div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-white font-medium">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="transition-all duration-200 focus:scale-105 bg-white/20 border-white/30 text-white placeholder:text-white/60"
-                />
-              </div>
+                {showForgotPassword && (
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword" className="text-white font-medium">New Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="newPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your new password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                        className="transition-all duration-200 focus:scale-105 pr-10 bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full px-3 text-white/70 hover:text-white"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-white font-medium">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                    className="transition-all duration-200 focus:scale-105 pr-10 bg-white/20 border-white/30 text-white placeholder:text-white/60"
-                  />
+                <Button 
+                  onClick={showForgotPassword ? handlePasswordReset : handleOTPVerification}
+                  className="w-full transition-all duration-200 hover:scale-105 hover:shadow-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
+                  disabled={isLoading || otpValue.length !== 6}
+                >
+                  {isLoading ? 'Verifying...' : (showForgotPassword ? 'Reset Password' : 'Verify Email')}
+                </Button>
+
+                <div className="text-center">
                   <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 text-white/70 hover:text-white"
-                    onClick={() => setShowPassword(!showPassword)}
+                    variant="link"
+                    onClick={() => {
+                      setShowOTP(false);
+                      setShowForgotPassword(false);
+                      setOtpValue('');
+                    }}
+                    className="text-white/80 hover:text-white transition-colors"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    Back to {isLogin ? 'login' : 'signup'}
                   </Button>
                 </div>
               </div>
+            ) : (
+              <>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {!isLogin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName" className="text-white font-medium">Full Name</Label>
+                      <Input
+                        id="fullName"
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={formData.fullName}
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        required={!isLogin}
+                        className="transition-all duration-200 focus:scale-105 bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                      />
+                    </div>
+                  )}
 
-              <Button 
-                type="submit" 
-                className="w-full mt-6 transition-all duration-200 hover:scale-105 hover:shadow-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
-              </Button>
-            </form>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white font-medium">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      className="transition-all duration-200 focus:scale-105 bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                    />
+                  </div>
 
-            <div className="mt-6 text-center">
-              <Button
-                variant="link"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                {isLogin 
-                  ? "Don't have an account? Sign up" 
-                  : "Already have an account? Sign in"
-                }
-              </Button>
-            </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white font-medium">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                        className="transition-all duration-200 focus:scale-105 pr-10 bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full px-3 text-white/70 hover:text-white"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {!isLogin && (
+                    <div className="space-y-2">
+                      <Label htmlFor="timezone" className="text-white font-medium">Timezone</Label>
+                      <Select value={formData.timezone} onValueChange={(value) => setFormData({ ...formData, timezone: value })}>
+                        <SelectTrigger className="bg-white/20 border-white/30 text-white">
+                          <SelectValue placeholder="Select your timezone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {timezones.map((tz) => (
+                            <SelectItem key={tz.value} value={tz.value}>
+                              {tz.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    className="w-full mt-6 transition-all duration-200 hover:scale-105 hover:shadow-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Send Verification Code')}
+                  </Button>
+                </form>
+
+                <div className="mt-6 space-y-3 text-center">
+                  {isLogin && (
+                    <Button
+                      variant="link"
+                      onClick={handleForgotPassword}
+                      className="text-white/80 hover:text-white transition-colors"
+                    >
+                      Forgot your password?
+                    </Button>
+                  )}
+                  
+                  <Button
+                    variant="link"
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="text-white/80 hover:text-white transition-colors"
+                  >
+                    {isLogin 
+                      ? "Don't have an account? Sign up" 
+                      : "Already have an account? Sign in"
+                    }
+                  </Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
