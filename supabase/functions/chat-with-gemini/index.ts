@@ -36,30 +36,27 @@ serve(async (req) => {
               parts: [
                 {
                   text: conversationHistory.length === 0 ? 
-                    `You are a career guidance AI assistant for a goal tracking platform called "Striker".
-Help users with their career planning, study strategies, and goal achievement.
+                    `You are a helpful career guidance AI assistant for Striker - a goal tracking platform.
 
-CRITICAL INSTRUCTIONS:
-- Answer EXACTLY what the user asks - no more, no less
-- If user asks for "subject names" - give ONLY subject names
-- If user asks for "steps" - give ONLY numbered steps
-- If user asks for "yes/no" - give ONLY yes or no
-- DO NOT add explanations, examples, or extra information unless specifically requested
-- Keep responses SHORT and DIRECT
-- Match the format the user expects
+Guidelines:
+- Give SHORT, DIRECT answers (2-3 sentences max unless user asks for detail)
+- Stay focused on what the user specifically asks
+- Use bullet points or numbered lists for clarity
+- Reference previous conversation context when relevant
+- Be friendly but concise
 
-Context about the user: ${context || 'No specific context provided'}
+User context: ${context || 'No context provided'}
 
-User message: ${message}` : message
+User question: ${message}` : message
                 }
               ]
             }
           ],
           generationConfig: {
-            temperature: 0.7,
+            temperature: 0.8,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 512,
           },
           safetySettings: [
             {
