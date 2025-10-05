@@ -235,21 +235,13 @@ export const Auth = () => {
 
     setIsLoading(true);
     try {
-      // Update password in Supabase auth.users table
-      const { data, error: listError } = await supabase.auth.admin.listUsers();
-      
-      if (listError) throw listError;
-      
-      const targetUser = data?.users?.find((u: any) => u.email === formData.email);
-      
-      if (!targetUser) {
-        throw new Error('User not found');
-      }
-
-      const { error } = await supabase.auth.admin.updateUserById(
-        targetUser.id,
-        { password: formData.password }
-      );
+      // Call edge function to reset password
+      const { data, error } = await supabase.functions.invoke('reset-password', {
+        body: { 
+          email: formData.email,
+          newPassword: formData.password 
+        }
+      });
 
       if (error) throw error;
 

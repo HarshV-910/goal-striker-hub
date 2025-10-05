@@ -66,11 +66,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       },
     });
 
-    // Auto-confirm the user if Supabase requires confirmation
-    if (data?.user && !data.user.email_confirmed_at) {
-      await supabase.auth.admin.updateUserById(data.user.id, {
-        email_confirm: true,
-      });
+    // Auto-confirm the user email to skip verification
+    if (data?.user?.id && !error) {
+      try {
+        await supabase.functions.invoke('confirm-signup', {
+          body: { userId: data.user.id }
+        });
+      } catch (confirmError) {
+        console.error('Error confirming user:', confirmError);
+      }
     }
     
     return { error };

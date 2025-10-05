@@ -65,6 +65,12 @@ verify_jwt = false
 [functions.send-reminder-email]
 verify_jwt = false
 
+[functions.reset-password]
+verify_jwt = false
+
+[functions.confirm-signup]
+verify_jwt = false
+
 [analytics]
 enabled = false
 port = 54328
