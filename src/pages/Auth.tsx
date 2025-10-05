@@ -235,8 +235,24 @@ export const Auth = () => {
 
     setIsLoading(true);
     try {
-      // Here you would typically update the password in the database
-      // For now, we'll show a success message
+      // Update password in Supabase auth.users table
+      const { data, error: listError } = await supabase.auth.admin.listUsers();
+      
+      if (listError) throw listError;
+      
+      const targetUser = data?.users?.find((u: any) => u.email === formData.email);
+      
+      if (!targetUser) {
+        throw new Error('User not found');
+      }
+
+      const { error } = await supabase.auth.admin.updateUserById(
+        targetUser.id,
+        { password: formData.password }
+      );
+
+      if (error) throw error;
+
       toast({
         title: "Success",
         description: "Password reset successfully! Please login with your new password.",
@@ -248,10 +264,10 @@ export const Auth = () => {
       setOtpValue('');
       setFormData({ ...formData, password: '' });
       setIsLogin(true);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to reset password. Please try again.",
+        description: error.message || "Failed to reset password. Please try again.",
         variant: "destructive",
       });
     } finally {

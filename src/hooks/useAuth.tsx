@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signUp = async (email: string, password: string, fullName: string, timezone: string = 'UTC') => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -65,6 +65,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         },
       },
     });
+
+    // Auto-confirm the user if Supabase requires confirmation
+    if (data?.user && !data.user.email_confirmed_at) {
+      await supabase.auth.admin.updateUserById(data.user.id, {
+        email_confirm: true,
+      });
+    }
     
     return { error };
   };
