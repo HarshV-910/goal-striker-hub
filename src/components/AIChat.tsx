@@ -132,12 +132,18 @@ export const AIChat = ({ onClose }: AIChatProps) => {
 
   const createNoteFromResponse = async (questionMessage: Message, responseMessage: Message) => {
     try {
+      const noteTitle = questionMessage.content.length > 50 
+        ? `AI Chat: ${questionMessage.content.substring(0, 50)}...`
+        : `AI Chat: ${questionMessage.content}`;
+      
+      const noteContent = `# ${questionMessage.content}\n\n**Created:** ${new Date().toLocaleString()}\n\n---\n\n${responseMessage.content}`;
+      
       const { error } = await supabase
         .from('notes')
         .insert([{
           user_id: user?.id,
-          title: `AI Chat: ${questionMessage.content.substring(0, 50)}...`,
-          content: `Question: ${questionMessage.content}\n\nResponse: ${responseMessage.content}`,
+          title: noteTitle,
+          content: noteContent,
           note_date: new Date().toISOString().split('T')[0]
         }]);
 

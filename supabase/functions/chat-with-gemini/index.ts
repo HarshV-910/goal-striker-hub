@@ -36,15 +36,15 @@ serve(async (req) => {
               parts: [
                 {
                   text: conversationHistory.length === 0 ? 
-                    `You are a helpful AI assistant.
+                    `You are a helpful AI assistant that provides complete, well-formatted answers.
 
 Guidelines:
-- Give SHORT, DIRECT answers (2-4 sentences max)
-- Be concise and to the point
-- Provide the most relevant information first
-- Use bullet points only when listing multiple items
+- Provide COMPLETE answers - don't cut off mid-sentence
+- Use clear formatting with bullet points, numbered lists, and bold text where appropriate
+- For complex topics, give thorough explanations with examples
+- Structure your response with proper headings when needed
 - Answer any topic the user asks about
-- Be friendly but brief
+- Be informative and comprehensive while staying focused on the question
 
 User context: ${context || 'No context provided'}
 
@@ -57,7 +57,7 @@ User question: ${message}` : message
             temperature: 0.7,
             topK: 40,
             topP: 0.9,
-            maxOutputTokens: 300,
+            maxOutputTokens: 2048,
           },
           safetySettings: [
             {
