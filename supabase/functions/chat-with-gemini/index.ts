@@ -36,14 +36,15 @@ serve(async (req) => {
               parts: [
                 {
                   text: conversationHistory.length === 0 ? 
-                    `You are a helpful career guidance AI assistant for Striker - a goal tracking platform.
+                    `You are a helpful AI assistant.
 
 Guidelines:
-- Give SHORT, DIRECT answers (2-3 sentences max unless user asks for detail)
-- Stay focused on what the user specifically asks
-- Use bullet points or numbered lists for clarity
-- Reference previous conversation context when relevant
-- Be friendly but concise
+- Give SHORT, DIRECT answers (2-4 sentences max)
+- Be concise and to the point
+- Provide the most relevant information first
+- Use bullet points only when listing multiple items
+- Answer any topic the user asks about
+- Be friendly but brief
 
 User context: ${context || 'No context provided'}
 
@@ -53,10 +54,10 @@ User question: ${message}` : message
             }
           ],
           generationConfig: {
-            temperature: 0.8,
+            temperature: 0.7,
             topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 512,
+            topP: 0.9,
+            maxOutputTokens: 300,
           },
           safetySettings: [
             {

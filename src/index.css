@@ -17,10 +17,10 @@
     --popover: 220 20% 10%;
     --popover-foreground: 0 0% 98%;
     
-    /* Primary blue/black gradient accent */
-    --primary: 220 100% 30%;
+    /* Primary light purple gradient accent */
+    --primary: 270 70% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 40%;
+    --primary-glow: 280 70% 70%;
     
     /* Secondary with glass effect */
     --secondary: 220 15% 15%;
@@ -31,7 +31,7 @@
     --muted-foreground: 0 0% 75%;
     
     /* Accent colors */
-    --accent: 240 70% 65%;
+    --accent: 270 65% 70%;
     --accent-foreground: 0 0% 100%;
     
     /* Destructive */
@@ -49,21 +49,21 @@
     /* Border and input */
     --border: 220 15% 20%;
     --input: 220 15% 15%;
-    --ring: 260 80% 60%;
+    --ring: 270 70% 65%;
     
     /* Sidebar colors - blackish theme */
     --sidebar-background: 220 25% 6%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 260 80% 60%;
+    --sidebar-primary: 270 70% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 15% 12%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 220 15% 15%;
-    --sidebar-ring: 260 80% 60%;
+    --sidebar-ring: 270 70% 65%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 100% 30%), hsl(220 100% 10%));
-    --gradient-dark: linear-gradient(135deg, hsl(220 30% 5%), hsl(220 40% 10%), hsl(240 50% 8%), rgba(255,255,255,0.05));
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 60%), hsl(270 70% 30%));
+    --gradient-dark: linear-gradient(135deg, hsl(220 30% 5%), hsl(220 40% 10%), hsl(270 50% 8%), rgba(255,255,255,0.05));
     --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
     
     /* Glass effect properties */
