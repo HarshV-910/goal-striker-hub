@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Calendar, Edit, Trash2, Download, Plus, Save, X } from 'lucide-react';
+import { Calendar, Edit, Trash2, Download, Plus, Save, X, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
 
 interface Note {
   id: string;
@@ -158,13 +165,18 @@ const Notes = () => {
     }
   };
 
-  const exportNote = (note: Note) => {
-    const content = `${note.title}\n\nDate: ${format(new Date(note.note_date), 'PPP')}\nCreated: ${format(new Date(note.created_at), 'PPp')}\n\n${note.content}`;
-    const blob = new Blob([content], { type: 'text/plain' });
+  const exportNote = (note: Note, fileFormat: 'txt' | 'md') => {
+    const dateFormatted = format(new Date(note.note_date), 'PPP');
+    const createdFormatted = format(new Date(note.created_at), 'PPp');
+    const content = `${note.title}\n\nDate: ${dateFormatted}\nCreated: ${createdFormatted}\n\n${note.content}`;
+    const mimeType = fileFormat === 'md' ? 'text/markdown' : 'text/plain';
+    const extension = fileFormat === 'md' ? 'md' : 'txt';
+    
+    const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+    a.download = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.${extension}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -172,7 +184,7 @@ const Notes = () => {
     
     toast({
       title: "Success",
-      description: "Note exported successfully",
+      description: `Note exported as ${extension.toUpperCase()}`,
     });
   };
 
@@ -288,7 +300,7 @@ const Notes = () => {
               onSave={(title, content) => updateNote(note.id, title, content)}
               onCancel={() => setEditingNote(null)}
               onDelete={() => deleteNote(note.id)}
-              onExport={() => exportNote(note)}
+              onExport={(fileFormat) => exportNote(note, fileFormat)}
             />
           ))
         )}
@@ -304,7 +316,7 @@ interface NoteCardProps {
   onSave: (title: string, content: string) => void;
   onCancel: () => void;
   onDelete: () => void;
-  onExport: () => void;
+  onExport: (format: 'txt' | 'md') => void;
 }
 
 const NoteCard = ({ note, isEditing, onEdit, onSave, onCancel, onDelete, onExport }: NoteCardProps) => {
@@ -350,9 +362,24 @@ const NoteCard = ({ note, isEditing, onEdit, onSave, onCancel, onDelete, onExpor
                 <Button size="sm" variant="outline" onClick={onEdit}>
                   <Edit className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" onClick={onExport}>
-                  <Download className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onExport('txt')}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Export as TXT
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onExport('md')}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Export as Markdown
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button size="sm" variant="destructive" onClick={onDelete}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -372,7 +399,55 @@ const NoteCard = ({ note, isEditing, onEdit, onSave, onCancel, onDelete, onExpor
             rows={6}
           />
         ) : (
-          <div className="whitespace-pre-wrap text-sm">{note.content}</div>
+          <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground prose-td:text-foreground prose-th:text-foreground">
+            <ReactMarkdown
+              components={{
+                h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4">{children}</h1>,
+                h2: ({ children }) => <h2 className="text-xl font-bold mb-2 mt-3">{children}</h2>,
+                h3: ({ children }) => <h3 className="text-lg font-bold mb-2 mt-2">{children}</h3>,
+                p: ({ children }) => <p className="mb-3 leading-relaxed">{children}</p>,
+                ul: ({ children }) => <ul className="mb-3 ml-6 list-disc">{children}</ul>,
+                ol: ({ children }) => <ol className="mb-3 ml-6 list-decimal">{children}</ol>,
+                li: ({ children }) => <li className="mb-1">{children}</li>,
+                strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                em: ({ children }) => <em className="italic">{children}</em>,
+                code: ({ children }) => (
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">
+                    {children}
+                  </code>
+                ),
+                pre: ({ children }) => (
+                  <pre className="bg-muted p-3 rounded-lg overflow-x-auto my-3">
+                    {children}
+                  </pre>
+                ),
+                table: ({ children }) => (
+                  <div className="overflow-x-auto my-3">
+                    <table className="min-w-full border-collapse border border-border">
+                      {children}
+                    </table>
+                  </div>
+                ),
+                thead: ({ children }) => <thead className="bg-muted">{children}</thead>,
+                th: ({ children }) => (
+                  <th className="border border-border px-4 py-2 text-left font-bold">
+                    {children}
+                  </th>
+                ),
+                td: ({ children }) => (
+                  <td className="border border-border px-4 py-2">{children}</td>
+                ),
+                hr: () => <hr className="my-4 border-border" />,
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-4 border-primary pl-4 my-3 italic">
+                    {children}
+                  </blockquote>
+                ),
+              }}
+            >
+              {note.content}
+            </ReactMarkdown>
+          </div>
         )}
       </CardContent>
     </Card>
