@@ -209,7 +209,7 @@ const Notes = () => {
                 {format(selectedDate, 'PPP')}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-card" align="start">
               <CalendarComponent
                 mode="single"
                 selected={selectedDate}
