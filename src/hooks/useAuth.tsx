@@ -69,11 +69,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Auto-confirm the user email to skip verification
     if (data?.user?.id && !error) {
       try {
+        // Add a small delay to ensure user is fully created in the database
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         await supabase.functions.invoke('confirm-signup', {
           body: { userId: data.user.id }
         });
+        
+        // Force a session refresh after confirmation
+        await supabase.auth.refreshSession();
       } catch (confirmError) {
         console.error('Error confirming user:', confirmError);
+        // If confirmation fails, the user can still use password reset to confirm
       }
     }
     
