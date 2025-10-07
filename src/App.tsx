@@ -12,6 +12,7 @@ import Goals from "./pages/Goals";
 import DailyLog from "./pages/DailyLog";
 import Calendar from "./pages/Calendar";
 import Notes from "./pages/Notes";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +80,11 @@ const App = () => (
             <Route path="/notes" element={
               <ProtectedRoute>
                 <Notes />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

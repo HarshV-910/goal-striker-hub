@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Clock, Globe, User, LogOut, Trash2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -38,6 +39,7 @@ const timezones = [
 ];
 
 export const Header = () => {
+  const navigate = useNavigate();
   const { user, signOut, deleteAccount } = useAuth();
   const { toast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -156,7 +158,7 @@ export const Header = () => {
                 {user?.email}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </DropdownMenuItem>
