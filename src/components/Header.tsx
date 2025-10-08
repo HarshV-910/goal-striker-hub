@@ -97,11 +97,14 @@ export const Header = () => {
         .eq('user_id', user?.id)
         .single();
 
+      console.log('Header profile fetch:', { data, error });
+
       if (error) throw error;
       if (data?.timezone) {
         setSelectedTimezone(data.timezone);
       }
       if (data?.avatar_url) {
+        console.log('Setting avatar URL:', data.avatar_url);
         setAvatarUrl(data.avatar_url);
       }
       if (data?.full_name) {
@@ -189,7 +192,7 @@ export const Header = () => {
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={avatarUrl} alt="Profile" />
                   <AvatarFallback className="bg-primary/10 text-primary">
-                    {fullName ? fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                    {fullName ? fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
               </Button>
