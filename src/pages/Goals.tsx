@@ -191,9 +191,9 @@ const Goals = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'text-green-600 bg-green-100';
-      case 'in_progress': return 'text-blue-600 bg-blue-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'completed': return 'text-white bg-green-600 hover:bg-green-700 hover:text-white';
+      case 'in_progress': return 'text-white bg-blue-600 hover:bg-blue-700 hover:text-white';
+      default: return 'text-white bg-gray-600 hover:bg-gray-700 hover:text-white';
     }
   };
 
