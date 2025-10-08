@@ -7,15 +7,15 @@
   :root {
     /* Professional dark gradient background */
     --background: 220 25% 8%;
-    --foreground: 0 0% 98%;
+    --foreground: 0 0% 100%;
     
     /* Glass effect card backgrounds */
     --card: 220 20% 12%;
-    --card-foreground: 0 0% 98%;
+    --card-foreground: 0 0% 100%;
     
     /* Popover with glass effect */
     --popover: 220 20% 10%;
-    --popover-foreground: 0 0% 98%;
+    --popover-foreground: 0 0% 100%;
     
     /* Primary light purple gradient accent */
     --primary: 270 70% 60%;
@@ -24,11 +24,11 @@
     
     /* Secondary with glass effect */
     --secondary: 220 15% 15%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary-foreground: 0 0% 100%;
     
     /* Muted elements */
     --muted: 220 15% 12%;
-    --muted-foreground: 0 0% 75%;
+    --muted-foreground: 0 0% 90%;
     
     /* Accent colors */
     --accent: 270 65% 70%;
@@ -53,11 +53,11 @@
     
     /* Sidebar colors - blackish theme */
     --sidebar-background: 220 25% 6%;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 270 70% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 15% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 15% 15%;
     --sidebar-ring: 270 70% 65%;
     
@@ -86,7 +86,6 @@
     background: var(--gradient-dark);
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
   
   /* Global glass effect utility classes */
