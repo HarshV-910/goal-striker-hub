@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Clock, Save, Loader2, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Clock, Save, Loader2, Lock, Eye, EyeOff, Camera } from 'lucide-react';
 import { z } from 'zod';
 
 const timezones = [
@@ -57,7 +58,10 @@ const Settings = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     timezone: 'UTC',
+    avatarUrl: '',
   });
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -81,7 +85,7 @@ const Settings = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('full_name, timezone')
+        .select('full_name, timezone, avatar_url')
         .eq('user_id', user?.id)
         .single();
 
@@ -91,6 +95,7 @@ const Settings = () => {
         setFormData({
           fullName: data.full_name || '',
           timezone: data.timezone || 'UTC',
+          avatarUrl: data.avatar_url || '',
         });
       }
     } catch (error) {
@@ -215,6 +220,93 @@ const Settings = () => {
       setIsChangingPassword(false);
     }
   };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (2MB)
+    if (file.size > 2097152) {
+      toast({
+        title: "Error",
+        description: "Image must be less than 2MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Error",
+        description: "Only JPEG, PNG, WEBP, and GIF images are allowed",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      // Delete old avatar if exists
+      if (formData.avatarUrl) {
+        const oldPath = formData.avatarUrl.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([`${user?.id}/${oldPath}`]);
+        }
+      }
+
+      // Upload new avatar
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${user?.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user?.id);
+
+      if (updateError) throw updateError;
+
+      setFormData({ ...formData, avatarUrl: publicUrl });
+
+      toast({
+        title: "Success",
+        description: "Profile picture updated successfully!",
+      });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload profile picture",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingAvatar(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -242,6 +334,51 @@ const Settings = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Profile Picture */}
+            <div className="space-y-2">
+              <Label>Profile Picture</Label>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={formData.avatarUrl} alt="Profile" />
+                  <AvatarFallback className="bg-primary/10 text-primary text-2xl">
+                    {formData.fullName ? formData.fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAvatarClick}
+                    disabled={isUploadingAvatar}
+                  >
+                    {isUploadingAvatar ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="mr-2 h-4 w-4" />
+                        Change Picture
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    JPG, PNG, WEBP or GIF. Max 2MB.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Email (read-only) */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

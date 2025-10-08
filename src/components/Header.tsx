@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Globe, User, LogOut, Trash2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -45,6 +46,8 @@ export const Header = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedTimezone, setSelectedTimezone] = useState('UTC');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -63,13 +66,19 @@ export const Header = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('timezone')
+        .select('timezone, avatar_url, full_name')
         .eq('user_id', user?.id)
         .single();
 
       if (error) throw error;
       if (data?.timezone) {
         setSelectedTimezone(data.timezone);
+      }
+      if (data?.avatar_url) {
+        setAvatarUrl(data.avatar_url);
+      }
+      if (data?.full_name) {
+        setFullName(data.full_name);
       }
     } catch (error) {
       console.error('Error fetching user timezone:', error);
@@ -149,8 +158,13 @@ export const Header = () => {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="hover:scale-105 transition-transform">
-                <User className="h-4 w-4" />
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:scale-105 transition-transform">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={avatarUrl} alt="Profile" />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {fullName ? fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="animate-fade-in">
