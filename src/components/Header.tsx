@@ -57,6 +57,33 @@ export const Header = () => {
     // Fetch user's timezone from profile
     if (user) {
       fetchUserTimezone();
+      
+      // Subscribe to profile changes for real-time avatar updates
+      const channel = supabase
+        .channel('profile-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            if (payload.new.avatar_url) {
+              setAvatarUrl(payload.new.avatar_url);
+            }
+            if (payload.new.full_name) {
+              setFullName(payload.new.full_name);
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        clearInterval(timer);
+        supabase.removeChannel(channel);
+      };
     }
 
     return () => clearInterval(timer);
