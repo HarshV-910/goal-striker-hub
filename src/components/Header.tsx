@@ -172,7 +172,21 @@ export const Header = () => {
           </div>
 
           {/* Timezone Selector */}
-          <Select value={selectedTimezone} onValueChange={setSelectedTimezone}>
+          <Select 
+            value={selectedTimezone} 
+            onValueChange={async (value) => {
+              setSelectedTimezone(value);
+              // Save timezone to profile
+              try {
+                await supabase
+                  .from('profiles')
+                  .update({ timezone: value })
+                  .eq('user_id', user?.id);
+              } catch (error) {
+                console.error('Error updating timezone:', error);
+              }
+            }}
+          >
             <SelectTrigger className="w-[180px]">
               <Globe className="h-4 w-4 mr-2" />
               <SelectValue />
