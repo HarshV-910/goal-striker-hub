@@ -58,26 +58,27 @@ export const Header = () => {
     if (user) {
       fetchUserTimezone();
       
-      // Subscribe to profile changes for real-time avatar and timezone updates
+      // Subscribe to profile changes for real-time avatar and timezone updates (both INSERT and UPDATE)
       const channel = supabase
         .channel('profile-changes')
         .on(
           'postgres_changes',
           {
-            event: 'UPDATE',
+            event: '*',
             schema: 'public',
             table: 'profiles',
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            if (payload.new.avatar_url !== undefined) {
-              setAvatarUrl(payload.new.avatar_url);
+            const newData = payload.new as any;
+            if (newData?.avatar_url !== undefined) {
+              setAvatarUrl(newData.avatar_url);
             }
-            if (payload.new.full_name) {
-              setFullName(payload.new.full_name);
+            if (newData?.full_name) {
+              setFullName(newData.full_name);
             }
-            if (payload.new.timezone) {
-              setSelectedTimezone(payload.new.timezone);
+            if (newData?.timezone) {
+              setSelectedTimezone(newData.timezone);
             }
           }
         )
@@ -98,7 +99,7 @@ export const Header = () => {
         .from('profiles')
         .select('timezone, avatar_url, full_name')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       if (data?.timezone) {
