@@ -348,7 +348,7 @@ export const Auth = () => {
         </div>
 
         <Card 
-          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden opacity-50 hover:opacity-95 focus-within:opacity-95 transition-opacity duration-300"
+          className="shadow-2xl backdrop-blur-xl bg-blue-500/2 border border-white/5 relative overflow-hidden"
           onMouseEnter={() => setIsMouseInForm(true)}
           onMouseLeave={() => setIsMouseInForm(false)}
           style={{

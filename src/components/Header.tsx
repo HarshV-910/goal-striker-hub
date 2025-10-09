@@ -58,7 +58,7 @@ export const Header = () => {
     if (user) {
       fetchUserTimezone();
       
-      // Subscribe to profile changes for real-time avatar updates
+      // Subscribe to profile changes for real-time avatar and timezone updates
       const channel = supabase
         .channel('profile-changes')
         .on(
@@ -70,11 +70,14 @@ export const Header = () => {
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            if (payload.new.avatar_url) {
+            if (payload.new.avatar_url !== undefined) {
               setAvatarUrl(payload.new.avatar_url);
             }
             if (payload.new.full_name) {
               setFullName(payload.new.full_name);
+            }
+            if (payload.new.timezone) {
+              setSelectedTimezone(payload.new.timezone);
             }
           }
         )
@@ -97,14 +100,11 @@ export const Header = () => {
         .eq('user_id', user?.id)
         .single();
 
-      console.log('Header profile fetch:', { data, error });
-
       if (error) throw error;
       if (data?.timezone) {
         setSelectedTimezone(data.timezone);
       }
       if (data?.avatar_url) {
-        console.log('Setting avatar URL:', data.avatar_url);
         setAvatarUrl(data.avatar_url);
       }
       if (data?.full_name) {

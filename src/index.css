@@ -87,6 +87,17 @@
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
   }
+
+  /* Remove text shadows and set full opacity */
+  * {
+    text-shadow: none !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure hover states also have full opacity */
+  *:hover {
+    opacity: 1 !important;
+  }
   
   /* Global glass effect utility classes */
   .glass-card {
