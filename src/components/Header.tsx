@@ -58,9 +58,9 @@ export const Header = () => {
     if (user) {
       fetchUserTimezone();
       
-      // Subscribe to profile changes for real-time avatar and timezone updates (both INSERT and UPDATE)
+      // Subscribe to profile changes for real-time updates
       const channel = supabase
-        .channel('profile-changes')
+        .channel('profile-updates')
         .on(
           'postgres_changes',
           {
@@ -70,19 +70,24 @@ export const Header = () => {
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
+            console.log('Profile update received:', payload);
             const newData = payload.new as any;
-            if (newData?.avatar_url !== undefined) {
-              setAvatarUrl(newData.avatar_url);
-            }
-            if (newData?.full_name) {
-              setFullName(newData.full_name);
-            }
-            if (newData?.timezone) {
-              setSelectedTimezone(newData.timezone);
+            if (newData) {
+              if (newData.avatar_url !== undefined) {
+                setAvatarUrl(newData.avatar_url || '');
+              }
+              if (newData.full_name) {
+                setFullName(newData.full_name);
+              }
+              if (newData.timezone) {
+                setSelectedTimezone(newData.timezone);
+              }
             }
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('Realtime subscription status:', status);
+        });
 
       return () => {
         clearInterval(timer);
